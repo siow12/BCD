@@ -7,16 +7,17 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 @Data
 public class DB<T> {
-    private List<T> entityStore;
+
+    private static String basePath = "storage/";
+    private LinkedList<T> entityStore;
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
@@ -28,31 +29,73 @@ public class DB<T> {
 
 
     public DB(Class<T> type) throws Exception {
-        if (getFile(type).exists()) {
-            try {
-                this.entityStore = mapper.readValue(getFile(type),
-                        mapper.getTypeFactory().constructCollectionType(ArrayList.class, type));
+        File file = getBinaryFile(type);
+        if (file.exists()) {
+            try (
+                    FileInputStream fis = new FileInputStream(file.getPath());
+                    ObjectInputStream input = new ObjectInputStream(fis);
+            ) {
+//                this.entityStore = mapper.readValue(getFile(type),
+//                        mapper.getTypeFactory().constructCollectionType(ArrayList.class, type));
+                this.entityStore = (LinkedList<T>) input.readObject();
+
             } catch (Exception e) {
-                this.entityStore = new ArrayList<>();
+                this.entityStore = new LinkedList<>();
+
+                //TODO create block
             }
         } else {
-            this.entityStore = new ArrayList<>();
+            this.entityStore = new LinkedList<>();
         }
         this.type = type;
     }
 
     public void save() throws Exception {
         mapper.writeValue(getFile(type), this.entityStore);
+
+        //Write binary file
+        //Write binary file
+        FileOutputStream fos = new FileOutputStream(getBinaryFile(type).getPath());
+        ObjectOutputStream out = new ObjectOutputStream(fos);
+
+        out.writeObject(this.entityStore);
+        fos.close();
+        out.close();
+        System.out.println(getFile(type).getPath() + " Updated");
     }
 
     private File getFile(Class<T> type) throws Exception {
-        File file = Paths.get(type.getSimpleName() + "Store.json").toFile();
+        File file = Paths.get(basePath + type.getSimpleName() + "Store.json").toFile();
         if (!file.exists()) {
+            Files.createDirectories(file.toPath().getParent());
             try {
-                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                //Create file
+                FileWriter fw = new FileWriter(file.getPath());
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write("");
                 bw.close();
+
+                return file;
+            } catch (Exception e) {
+                throw new Exception("File Not Found");
+            }
+        } else {
+            return file;
+        }
+
+    }
+
+    private File getBinaryFile(Class<T> type) throws Exception {
+        File file = Paths.get(basePath + type.getSimpleName() + "Store.bin").toFile();
+        if (!file.exists()) {
+            Files.createDirectories(file.toPath().getParent());
+            try {
+                //Create file
+                FileWriter fw = new FileWriter(file.getPath());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write("");
+                bw.close();
+
                 return file;
             } catch (Exception e) {
                 throw new Exception("File Not Found");
