@@ -1,5 +1,7 @@
 package org.example.cryptography;
 
+import org.example.blockchain.Transaction;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
 
 public class MerkleTree {
 
-    private List<Object> tranxLst;
+    private List<Transaction> tranxLst;
     private String root = "0";
 
     public String getRoot() {
@@ -27,7 +29,7 @@ public class MerkleTree {
      *
      * @param tranxLst
      */
-    private MerkleTree(List<Object> tranxLst) {
+    private MerkleTree(List<Transaction> tranxLst) {
         super();
         this.tranxLst = tranxLst;
     }
@@ -35,7 +37,7 @@ public class MerkleTree {
      * Design pattern: Singleton
      */
     private static MerkleTree instance;
-    public static MerkleTree getInstance( List<Object> tranxLst ) {
+    public static MerkleTree getInstance( List<Transaction> tranxLst ) {
         if( instance == null ) {
             return new MerkleTree(tranxLst);
         }
@@ -48,7 +50,7 @@ public class MerkleTree {
         List<Object> tempLst = new ArrayList<>();
 
         for (Object tranx : this.tranxLst) {
-            tempLst.add(Hasher.hash(String.valueOf(tranx),"SHA-256"));
+            tempLst.add(Hasher.hashSHA256(String.valueOf(tranx)));
         }
 
         List<String> hashes = genTranxHashLst( tempLst );
@@ -76,7 +78,7 @@ public class MerkleTree {
             Object right = "";
             if( i != tranxLst.size() ) right = tranxLst.get(i);
 
-            String hash = Hasher.hash(String.valueOf(left).concat(String.valueOf(right)) , "SHA-256");
+            String hash = Hasher.hashSHA256(String.valueOf(left).concat(String.valueOf(right)));
             hashLst.add(hash);
             i++;
         }
@@ -94,7 +96,7 @@ public class MerkleTree {
             String right = "";
             if( i != tranxLst.size() ) right = tranxLst.get(i);
 
-            String hash = Hasher.hash(left.concat(right) , "SHA-256");
+            String hash = Hasher.hashSHA256(left.concat(right));
             hashLst.add(hash);
             i++;
         }

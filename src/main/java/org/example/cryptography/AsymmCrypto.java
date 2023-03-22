@@ -8,6 +8,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 
+
+//TODO Refactor
 public class AsymmCrypto {
 
 
@@ -22,7 +24,8 @@ public class AsymmCrypto {
     }
 
 
-    public String encrypt( String input, String hashUserName) throws Exception{
+    public String encrypt( String input, String userName) throws Exception{
+        String hashUserName = Hasher.hashSHA256(userName);
         PublicKey publicKey = KeyAccess.getPublicKey(hashUserName);
         String cipherText = null;
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -41,6 +44,7 @@ public class AsymmCrypto {
     /**
      * decrypt(String, PrivateKey)
      */
+    //todo
     public String decrypt( String cipherText, String hashUserName ) throws Exception{
       PrivateKey privateKey = KeyAccess.getPrivateKey(hashUserName);
       cipher.init(Cipher.DECRYPT_MODE, privateKey);

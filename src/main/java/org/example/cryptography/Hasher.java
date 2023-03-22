@@ -7,11 +7,26 @@ import java.security.MessageDigest;
 public class Hasher {
 
 
-    public static String hash( String data, String algorithm )
+    public static String hashSHA256(String data)
     {
         String hash = null;
         try {
-            MessageDigest md = MessageDigest.getInstance(algorithm);
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update( data.getBytes() );
+            byte[] hashBytes = md.digest();
+            hash = String.valueOf( Hex.encodeHex(hashBytes) );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return hash;
+    }
+
+    public static String hashSHA512(String data)
+    {
+        String hash = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update( data.getBytes() );
             byte[] hashBytes = md.digest();
             hash = String.valueOf( Hex.encodeHex(hashBytes) );
@@ -41,10 +56,10 @@ public class Hasher {
 
 
     //overloaded hash() for hashing the block object
-    public static String hash( byte[] blockBytes, String algorithm ) {
+    public static String hash( byte[] blockBytes) {
         String hash = null;
         try {
-            MessageDigest md = MessageDigest.getInstance(algorithm);
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = md.digest( blockBytes );
             hash = String.valueOf( Hex.encodeHex(hashBytes) );
         } catch (Exception e) {
