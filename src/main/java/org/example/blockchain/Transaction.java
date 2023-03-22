@@ -1,35 +1,22 @@
 package org.example.blockchain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
+
+//Todo Transaction Structure
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Transaction implements Serializable{
-
-    private final int SIZE = 10;
-
-    List<Object> tranxLst;
-
-    public Transaction() {
-        tranxLst = new ArrayList<>( SIZE );
-    }
-
-    public List<Object> getTranxLst() {
-      return tranxLst;
-    }
-
-    public void setTranxLst(List<Object> tranxLst) {
-      this.tranxLst = tranxLst;
-    }
-
-    //add( String ) : void
-    public void add( Object tranx ){
-        tranxLst.add(tranx);
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction [tranxLst=" + tranxLst + "]";
-    }
-
+    private String from;
+    private String to;
+    private String amount;
+    private long timestamp;
+    private String signature;
 }

@@ -2,6 +2,7 @@ package org.example.cryptography.KeyCreator;
 
 
 import org.example.cryptography.Configuration;
+import org.example.cryptography.Hasher;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -28,8 +29,10 @@ public class KeyPairMaker {
     /**
      * create()
      */
-    public static void create(String hashUserName) {
+    public static void create(String userName) {
         try {
+            String hashUserName = Hasher.hashSHA256(userName);
+
             //KeyPairMaker object
             KeyPairMaker maker = new KeyPairMaker();
             //generate keypair
