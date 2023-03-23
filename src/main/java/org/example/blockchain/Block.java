@@ -48,8 +48,10 @@ public class Block implements Serializable {
         private long timeStamp;
         private String merkleRootStr;
         private long campaignId;
+        private String organizer;
+
+
         private Double expectedDonationAmount;
-        private Double actualDonationAmount;
 
         public void finalizeHeader(List<Transaction> transactions) {
             this.merkleRootStr = MerkleTreeService.getMerkleRoot(transactions);
