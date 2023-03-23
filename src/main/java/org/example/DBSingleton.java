@@ -10,7 +10,7 @@ public class DBSingleton {
 
     private static final Map<String, DB<?>> dbMap = new ConcurrentHashMap<>();
 
-    public static synchronized <T> DB<T> getDb(Class<T> type) throws Exception {
+    public static synchronized <T> DB<T> getDb(Class<T> type) {
         if (!dbMap.containsKey(type.getSimpleName())) {
             dbMap.put(type.getSimpleName(), new DB<>(type));
         }

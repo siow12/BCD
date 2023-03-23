@@ -4,7 +4,7 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.security.MessageDigest;
 
-public class Hasher {
+public class HasherService {
 
 
     public static String hashSHA256(String data)

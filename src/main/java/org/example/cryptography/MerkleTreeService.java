@@ -5,17 +5,17 @@ import org.example.blockchain.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MerkleTreeV2 {
+public class MerkleTreeService {
     public static String getMerkleRoot(List<Transaction> transactions){
         List<Object> temp = new ArrayList<>();
 
         for (Object tranx : transactions) {
-            temp.add(Hasher.hashSHA256(String.valueOf(tranx)));
+            temp.add(HasherService.hashSHA256(String.valueOf(tranx)));
         }
 
         List<String> hashes = genTranxHashLst( temp );
-        while(  hashes.size() != 1 ) {
-            hashes = genTranxHashLst1( hashes );
+        while (hashes.size() != 1) {
+            hashes = genTranxHashLst1(hashes);
         }
         return hashes.get(0);
     }
@@ -31,7 +31,7 @@ public class MerkleTreeV2 {
             Object right = "";
             if( i != tranxLst.size() ) right = tranxLst.get(i);
 
-            String hash = Hasher.hashSHA256(String.valueOf(left).concat(String.valueOf(right)));
+            String hash = HasherService.hashSHA256(String.valueOf(left).concat(String.valueOf(right)));
             hashLst.add(hash);
             i++;
         }
@@ -49,7 +49,7 @@ public class MerkleTreeV2 {
             String right = "";
             if( i != tranxLst.size() ) right = tranxLst.get(i);
 
-            String hash = Hasher.hashSHA256(left.concat(right));
+            String hash = HasherService.hashSHA256(left.concat(right));
             hashLst.add(hash);
             i++;
         }

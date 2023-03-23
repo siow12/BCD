@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 
-//Todo Transaction Structure
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +15,7 @@ import java.io.Serializable;
 public class Transaction implements Serializable{
     private String from;
     private String to;
-    private String amount;
     private long timestamp;
     private String signature;
+    private Object data;
 }
