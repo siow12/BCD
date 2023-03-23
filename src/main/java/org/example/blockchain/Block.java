@@ -1,13 +1,13 @@
 package org.example.blockchain;
 
 import lombok.Data;
-import org.example.cryptography.Hasher;
-import org.example.cryptography.MerkleTreeV2;
+import org.example.cryptography.HasherService;
+import org.example.cryptography.MerkleTreeService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class Block implements Serializable {
     public Block(String previousHash) {
         this.header = new Header();
         this.header.previousHash = previousHash;
-        this.header.timeStamp = new Timestamp(System.currentTimeMillis()).getTime();
+        this.header.timeStamp = Instant.now().toEpochMilli();
         this.header.campaignId = 10000;
         this.header.merkleRootStr = null;
         finalizeBlock();
@@ -31,8 +31,10 @@ public class Block implements Serializable {
         this.header.index = index;
         this.header.previousHash = previousHash;
         this.header.campaignId = campaignId;
-        this.header.timeStamp = new Timestamp(System.currentTimeMillis()).getTime();
+        this.header.timeStamp = Instant.now().toEpochMilli();
         this.transactions = transactions;
+        this.header.finalizeHeader(transactions);
+        finalizeBlock();
     }
 
 
@@ -46,11 +48,11 @@ public class Block implements Serializable {
         private long timeStamp;
         private String merkleRootStr;
         private long campaignId;
-        private double expectedDonationAmount;
-        private double actualDonationAmount;
+        private Double expectedDonationAmount;
+        private Double actualDonationAmount;
 
         public void finalizeHeader(List<Transaction> transactions) {
-            this.merkleRootStr = MerkleTreeV2.getMerkleRoot(transactions);
+            this.merkleRootStr = MerkleTreeService.getMerkleRoot(transactions);
         }
     }
 
@@ -71,8 +73,12 @@ public class Block implements Serializable {
 
     public void finalizeBlock(){
         byte[] blockBytes = getBytes(this);
-        this.header.currentHash = Hasher.hash(blockBytes);
+        this.header.currentHash = HasherService.hash(blockBytes);
+    }
+
+    public void finalizeHeader(){
         this.header.finalizeHeader(this.transactions);
     }
+
 
 }

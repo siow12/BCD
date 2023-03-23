@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class Blockchain {
 
-    public static DB<Block> db = null;
+    private static DB<Block> db = null;
 
     static {
         try {
@@ -18,14 +18,17 @@ public class Blockchain {
         }
     }
 
-    public static void newBlock(Block block) throws Exception {
-        if (db.getEntityStore().getLast().getHeader().getCurrentHash() == null)
-            throw new Exception("Can't add block, latest block is not finalized");
+    public static void newBlock(Block block) throws Exception{
         db.getEntityStore().add(block);
         db.save();
     }
 
-    public static LinkedList<Block> getBlock() {
+
+    public static LinkedList<Block> getBlocks() throws Exception {
+        if(db.getEntityStore().size() == 0){
+            Block genesis = new Block("0");
+            newBlock(genesis);
+        }
         return db.getEntityStore();
     }
 }

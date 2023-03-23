@@ -28,21 +28,17 @@ public class DB<T> {
     private Class<T> type;
 
 
-    public DB(Class<T> type) throws Exception {
+    public DB(Class<T> type) {
         File file = getBinaryFile(type);
         if (file.exists()) {
             try (
                     FileInputStream fis = new FileInputStream(file.getPath());
                     ObjectInputStream input = new ObjectInputStream(fis);
             ) {
-//                this.entityStore = mapper.readValue(getFile(type),
-//                        mapper.getTypeFactory().constructCollectionType(ArrayList.class, type));
                 this.entityStore = (LinkedList<T>) input.readObject();
 
             } catch (Exception e) {
                 this.entityStore = new LinkedList<>();
-
-                //TODO create block
             }
         } else {
             this.entityStore = new LinkedList<>();
@@ -53,7 +49,6 @@ public class DB<T> {
     public void save() throws Exception {
         mapper.writeValue(getFile(type), this.entityStore);
 
-        //Write binary file
         //Write binary file
         FileOutputStream fos = new FileOutputStream(getBinaryFile(type).getPath());
         ObjectOutputStream out = new ObjectOutputStream(fos);
@@ -85,11 +80,11 @@ public class DB<T> {
 
     }
 
-    private File getBinaryFile(Class<T> type) throws Exception {
+    private File getBinaryFile(Class<T> type) {
         File file = Paths.get(basePath + type.getSimpleName() + "Store.bin").toFile();
         if (!file.exists()) {
-            Files.createDirectories(file.toPath().getParent());
             try {
+                Files.createDirectories(file.toPath().getParent());
                 //Create file
                 FileWriter fw = new FileWriter(file.getPath());
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -98,8 +93,9 @@ public class DB<T> {
 
                 return file;
             } catch (Exception e) {
-                throw new Exception("File Not Found");
+                e.printStackTrace();
             }
+            return file;
         } else {
             return file;
         }

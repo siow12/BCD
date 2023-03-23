@@ -1,7 +1,6 @@
 package org.example.cryptography;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.example.cryptography.KeyCreator.KeyAccess;
 
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
@@ -9,13 +8,10 @@ import java.security.PublicKey;
 import java.util.Base64;
 
 
-//TODO Refactor
-public class AsymmCrypto {
+public class AsymmCryptoService {
+    private static Cipher cipher;
 
-
-    private Cipher cipher;
-
-    public AsymmCrypto() {
+    static {
         try {
             cipher = Cipher.getInstance(Configuration.RSA_ALGORITHM);
         } catch (Exception e) {
@@ -23,10 +19,8 @@ public class AsymmCrypto {
         }
     }
 
-
-    public String encrypt( String input, String userName) throws Exception{
-        String hashUserName = Hasher.hashSHA256(userName);
-        PublicKey publicKey = KeyAccess.getPublicKey(hashUserName);
+    public static String encrypt( String input, String userName) throws Exception{
+        PublicKey publicKey = KeyPairService.getPublicKey(userName);
         String cipherText = null;
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         //encrypt
@@ -40,13 +34,11 @@ public class AsymmCrypto {
         return cipherText;
     }
 
-
     /**
      * decrypt(String, PrivateKey)
      */
-    //todo
-    public String decrypt( String cipherText, String hashUserName ) throws Exception{
-      PrivateKey privateKey = KeyAccess.getPrivateKey(hashUserName);
+    public static String decrypt( String cipherText, String userName ) throws Exception{
+      PrivateKey privateKey = KeyPairService.getPrivateKey(userName);
       cipher.init(Cipher.DECRYPT_MODE, privateKey);
       
       byte[] byteArray = Base64.getDecoder().decode( cipherText.getBytes() ) ;

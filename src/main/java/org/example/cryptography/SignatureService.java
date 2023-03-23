@@ -1,32 +1,19 @@
 package org.example.cryptography;
 
 
-import org.example.cryptography.KeyCreator.KeyAccess;
-
 import java.security.KeyPair;
 import java.util.Base64;
 
-public class Signature {
-
-
-    private java.security.Signature signature;
-
-    private KeyPair keyPair;
-
-    public Signature(String hashUsername) {
-        try {
-          keyPair = new KeyPair(KeyAccess.getPublicKey(hashUsername), KeyAccess.getPrivateKey(hashUsername));
-          signature = java.security.Signature.getInstance( "SHA256WithRSA" );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+public class SignatureService {
 
     /**
      * sign()
      */
-    public String sign( String data ) {
+    public static String sign( String data, String username ) {
         try {
+            KeyPair keyPair = new KeyPair(KeyPairService.getPublicKey(username), KeyPairService.getPrivateKey(username));
+            java.security.Signature signature = java.security.Signature.getInstance( "SHA256WithRSA" );
+
             signature.initSign( keyPair.getPrivate() );
             signature.update( data.getBytes() );
             return Base64.getEncoder().encodeToString( signature.sign() );
@@ -40,8 +27,11 @@ public class Signature {
     /**
      * verify()
      */
-    public boolean verify( String data, String signatureString ) {
+    public static boolean verify( String data,String username, String signatureString ) {
         try {
+            KeyPair keyPair = new KeyPair(KeyPairService.getPublicKey(username), KeyPairService.getPrivateKey(username));
+            java.security.Signature signature = java.security.Signature.getInstance( "SHA256WithRSA" );
+
             signature.initVerify(keyPair.getPublic());
             signature.update( data.getBytes() );
             return signature.verify( Base64.getDecoder().decode(signatureString) );
