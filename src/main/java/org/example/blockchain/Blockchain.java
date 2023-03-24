@@ -40,7 +40,7 @@ public class Blockchain {
 
 
     public static List<Block> findBlockByOrganizer(String organizer) {
-        return db.getEntityStore().stream().filter(b->b.getHeader().getOrganizer().equals(organizer)).toList();
+        return db.getEntityStore().stream().filter(b->b.getHeader().getOrganizerName().equals(organizer)).toList();
     }
 
 

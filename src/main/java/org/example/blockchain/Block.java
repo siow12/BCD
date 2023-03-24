@@ -50,7 +50,10 @@ public class Block implements Serializable {
 
         //Campaign data
         private long campaignId;
-        private String organizer;
+        private String campaignName;
+        private String description;
+        private String address;
+        private String organizerName;
         private String beneficiary;
         private long startDate;
         private long endDate;

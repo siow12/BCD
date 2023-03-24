@@ -8,12 +8,12 @@ package org.example;
  *
  * @author Pc
  */
-public class DonerViewCampaign extends javax.swing.JFrame {
+public class DonorViewCampaign extends javax.swing.JFrame {
 
     /**
      * Creates new form ViewCampaign
      */
-    public DonerViewCampaign() {
+    public DonorViewCampaign() {
         initComponents();
     }
 
@@ -173,21 +173,23 @@ public class DonerViewCampaign extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DonerViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DonerViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DonerViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DonerViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorViewCampaign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DonerViewCampaign().setVisible(true);
+                new DonorViewCampaign().setVisible(true);
             }
         });
     }

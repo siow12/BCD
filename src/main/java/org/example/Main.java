@@ -22,8 +22,8 @@ public class Main {
     //Screens
     public static final LoginPage loginPage = new LoginPage();
     public static final RegisterPage registerPage = new RegisterPage();
-    public static final DonerHomepage donorHomePage = new DonerHomepage();
-    public static final DonerViewCampaign donorViewCampaign = new DonerViewCampaign();
+    public static final DonorHomepage donorHomePage = new DonorHomepage();
+    public static final DonorViewCampaign donorViewCampaign = new DonorViewCampaign();
     public static final Donation donation = new Donation();
     public static final OrganizerHomepage organizerHomePage = new OrganizerHomepage();
     public static final OrganizerAddCampaign organizerAddCampaign = new OrganizerAddCampaign();

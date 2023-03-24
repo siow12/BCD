@@ -70,8 +70,22 @@ public class OrganizerHomepage extends javax.swing.JFrame {
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(campaignTable);
+        if (campaignTable.getColumnModel().getColumnCount() > 0) {
+            campaignTable.getColumnModel().getColumn(0).setResizable(false);
+            campaignTable.getColumnModel().getColumn(1).setResizable(false);
+            campaignTable.getColumnModel().getColumn(2).setResizable(false);
+            campaignTable.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

@@ -10,14 +10,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Pc
  */
-public class DonerHomepage extends javax.swing.JFrame {
+public class DonorHomepage extends javax.swing.JFrame {
 
     private DefaultTableModel tableModel;
 
     /**
      * Creates new form DonerHomepage
      */
-    public DonerHomepage() {
+    public DonorHomepage() {
         initComponents();
         tableModel = (DefaultTableModel) campaignTable.getModel();
     }
@@ -73,10 +73,24 @@ public class DonerHomepage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Campaign ID", "Campaign Name", "Description", "Expected Amount"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(campaignTable);
+        if (campaignTable.getColumnModel().getColumnCount() > 0) {
+            campaignTable.getColumnModel().getColumn(0).setResizable(false);
+            campaignTable.getColumnModel().getColumn(1).setResizable(false);
+            campaignTable.getColumnModel().getColumn(2).setResizable(false);
+            campaignTable.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -174,20 +188,21 @@ public class DonerHomepage extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DonerHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DonerHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DonerHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DonerHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DonorHomepage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DonerHomepage().setVisible(true);
+                new DonorHomepage().setVisible(true);
             }
         });
     }

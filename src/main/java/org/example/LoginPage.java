@@ -67,6 +67,11 @@ public class LoginPage extends javax.swing.JFrame {
         });
 
         goToRegisterLabel.setText("Register?");
+        goToRegisterLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                goToRegisterLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -159,6 +164,12 @@ public class LoginPage extends javax.swing.JFrame {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         System.exit(0);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void goToRegisterLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goToRegisterLabelMouseClicked
+        // TODO add your handling code here:
+        this.setVisible(false);
+        Main.registerPage.setVisible(true);
+    }//GEN-LAST:event_goToRegisterLabelMouseClicked
 
     private void navigateToPage(){
         switch (Main.currentUser.getRole()){
