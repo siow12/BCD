@@ -76,10 +76,24 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "From", "To", "Time", "Signature"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane3.setViewportView(transactionTable);
+        if (transactionTable.getColumnModel().getColumnCount() > 0) {
+            transactionTable.getColumnModel().getColumn(0).setResizable(false);
+            transactionTable.getColumnModel().getColumn(1).setResizable(false);
+            transactionTable.getColumnModel().getColumn(2).setResizable(false);
+            transactionTable.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         totalAmountLabel.setText("Total Amount:");
 
