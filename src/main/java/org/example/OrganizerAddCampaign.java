@@ -63,8 +63,18 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
         });
 
         addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         desLabel.setText("Description:");
 
@@ -178,6 +188,14 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
     private void organizerNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_organizerNameFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_organizerNameFieldActionPerformed
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments

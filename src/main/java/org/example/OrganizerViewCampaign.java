@@ -62,6 +62,11 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         });
 
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -155,6 +160,10 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
     private void donateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_donateButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_donateButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments

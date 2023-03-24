@@ -54,8 +54,18 @@ public class DonerViewCampaign extends javax.swing.JFrame {
         jLabel3.setText("Details");
 
         verifyButton.setText("Verify");
+        verifyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verifyButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -132,6 +142,14 @@ public class DonerViewCampaign extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verifyButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments

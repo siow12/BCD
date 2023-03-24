@@ -40,10 +40,25 @@ public class DonerHomepage extends javax.swing.JFrame {
         jLabel1.setText("Campaign");
 
         addDonationButton.setText("Add Donation");
+        addDonationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDonationButtonActionPerformed(evt);
+            }
+        });
 
         viewCampaignButton.setText("View Campaign");
+        viewCampaignButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewCampaignButtonActionPerformed(evt);
+            }
+        });
 
         logoutButton.setText("Logout");
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
+            }
+        });
 
         campaignTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -83,7 +98,7 @@ public class DonerHomepage extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 310, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(addDonationButton)
                         .addGap(18, 18, 18)
                         .addComponent(viewCampaignButton)
@@ -114,6 +129,18 @@ public class DonerHomepage extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void addDonationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDonationButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addDonationButtonActionPerformed
+
+    private void viewCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewCampaignButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_viewCampaignButtonActionPerformed
+
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_logoutButtonActionPerformed
 
     /**
      * @param args the command line arguments

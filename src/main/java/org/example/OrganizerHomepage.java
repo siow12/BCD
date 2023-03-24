@@ -40,6 +40,11 @@ public class OrganizerHomepage extends javax.swing.JFrame {
         jLabel1.setText("Campaign");
 
         addCampaignButton.setText("Add Campaign");
+        addCampaignButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addCampaignButtonActionPerformed(evt);
+            }
+        });
 
         viewCampaignButton.setText("View Campaign");
         viewCampaignButton.addActionListener(new java.awt.event.ActionListener() {
@@ -49,6 +54,11 @@ public class OrganizerHomepage extends javax.swing.JFrame {
         });
 
         logoutButton.setText("Logout");
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
+            }
+        });
 
         campaignTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -119,6 +129,14 @@ public class OrganizerHomepage extends javax.swing.JFrame {
     private void viewCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewCampaignButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_viewCampaignButtonActionPerformed
+
+    private void addCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCampaignButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addCampaignButtonActionPerformed
+
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_logoutButtonActionPerformed
 
     /**
      * @param args the command line arguments
