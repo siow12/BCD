@@ -11,4 +11,6 @@ import java.io.Serializable;
 @Builder
 public class DonationFromDonorTransactionData implements Serializable {
     private Double amount;
+    private String donorName;
+    private String message;
 }

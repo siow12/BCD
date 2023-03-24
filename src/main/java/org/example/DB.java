@@ -10,7 +10,6 @@ import lombok.Setter;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 @Data
@@ -28,7 +27,7 @@ public class DB<T> {
     private Class<T> type;
 
 
-    public DB(Class<T> type) {
+    public DB(Class<T> type) {//Load data into linked list
         File file = getBinaryFile(type);
         if (file.exists()) {
             try (
@@ -46,20 +45,24 @@ public class DB<T> {
         this.type = type;
     }
 
-    public void save() throws Exception {
-        mapper.writeValue(getFile(type), this.entityStore);
+    public void save() {//Save object to binary file
+        try {
+            mapper.writeValue(getFile(type), this.entityStore);
 
-        //Write binary file
-        FileOutputStream fos = new FileOutputStream(getBinaryFile(type).getPath());
-        ObjectOutputStream out = new ObjectOutputStream(fos);
+            //Write binary file
+            FileOutputStream fos = new FileOutputStream(getBinaryFile(type).getPath());
+            ObjectOutputStream out = new ObjectOutputStream(fos);
 
-        out.writeObject(this.entityStore);
-        fos.close();
-        out.close();
-        System.out.println(getFile(type).getPath() + " Updated");
+            out.writeObject(this.entityStore);
+            fos.close();
+            out.close();
+            System.out.println(getFile(type).getPath() + " Updated");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private File getFile(Class<T> type) throws Exception {
+    private File getFile(Class<T> type) throws Exception {//load file based on class name
         File file = Paths.get(basePath + type.getSimpleName() + "Store.json").toFile();
         if (!file.exists()) {
             Files.createDirectories(file.toPath().getParent());
@@ -80,7 +83,7 @@ public class DB<T> {
 
     }
 
-    private File getBinaryFile(Class<T> type) {
+    private File getBinaryFile(Class<T> type) {//load file based on class name
         File file = Paths.get(basePath + type.getSimpleName() + "Store.bin").toFile();
         if (!file.exists()) {
             try {

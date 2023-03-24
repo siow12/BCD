@@ -4,6 +4,13 @@
  */
 package org.example;
 
+import org.example.controller.UserController;
+import org.example.exception.InvalidCredentialException;
+import org.example.exception.UserNotFoundException;
+import org.example.model.User;
+
+import javax.swing.*;
+
 /**
  *
  * @author Pc
@@ -133,12 +140,40 @@ public class LoginPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
-        // TODO add your handling code here:
+        try{
+            if(usernameField.getText().isEmpty() || String.valueOf(passwordField.getPassword()).isEmpty()){
+                JOptionPane.showMessageDialog(null, "Username or Password is empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            UserController.login(usernameField.getText(), String.valueOf(passwordField.getPassword()));
+            JOptionPane.showMessageDialog(null, Main.currentUser.getUserName() + ", login Success!!");
+            navigateToPage();
+            this.setVisible(false);
+        }catch (InvalidCredentialException e){
+            JOptionPane.showMessageDialog(null, "Wrong UserName or Password!!", "Error", JOptionPane.ERROR_MESSAGE);
+        }catch (UserNotFoundException e){
+            JOptionPane.showMessageDialog(null, "User Not Found", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_confirmButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void navigateToPage(){
+        switch (Main.currentUser.getRole()){
+            case User.Role.DONOR -> {
+                Main.donorHomePage.setVisible(true);
+                Main.donorHomePage.loadAllCampaign();
+            }
+            case  User.Role.ORGANIZER -> {
+                Main.organizerHomePage.setVisible(true);
+            }
+            case  User.Role.BENEFICIARY -> {
+                Main.beneficiaryHomepage.setVisible(true);
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -147,7 +182,7 @@ public class LoginPage extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

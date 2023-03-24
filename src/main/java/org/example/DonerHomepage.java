@@ -4,17 +4,22 @@
  */
 package org.example;
 
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Pc
  */
 public class DonerHomepage extends javax.swing.JFrame {
 
+    private DefaultTableModel tableModel;
+
     /**
      * Creates new form DonerHomepage
      */
     public DonerHomepage() {
         initComponents();
+        tableModel = (DefaultTableModel) campaignTable.getModel();
     }
 
     /**
@@ -132,15 +137,25 @@ public class DonerHomepage extends javax.swing.JFrame {
 
     private void addDonationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDonationButtonActionPerformed
         // TODO add your handling code here:
+
+        this.setVisible(false);
+        Main.donation.setVisible(true);
     }//GEN-LAST:event_addDonationButtonActionPerformed
 
     private void viewCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewCampaignButtonActionPerformed
         // TODO add your handling code here:
+
+        this.setVisible(false);
+        Main.donorViewCampaign.setVisible(true);
     }//GEN-LAST:event_viewCampaignButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_logoutButtonActionPerformed
+
+    public void loadAllCampaign(){
+
+    }
 
     /**
      * @param args the command line arguments

@@ -6,9 +6,6 @@ import java.util.Base64;
 
 public class SignatureService {
 
-    /**
-     * sign()
-     */
     public static String sign( String data, String username ) {
         try {
             KeyPair keyPair = new KeyPair(KeyPairService.getPublicKey(username), KeyPairService.getPrivateKey(username));
@@ -23,10 +20,6 @@ public class SignatureService {
         }
     }
 
-
-    /**
-     * verify()
-     */
     public static boolean verify( String data,String username, String signatureString ) {
         try {
             KeyPair keyPair = new KeyPair(KeyPairService.getPublicKey(username), KeyPairService.getPrivateKey(username));

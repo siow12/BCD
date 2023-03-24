@@ -41,16 +41,19 @@ public class Block implements Serializable {
     @Data
     public static class Header implements Serializable {
 
-        // define properties
+        //Basic block header data
         private int index;
         private String currentHash;
         private String previousHash;
         private long timeStamp;
         private String merkleRootStr;
+
+        //Campaign data
         private long campaignId;
         private String organizer;
-
-
+        private String beneficiary;
+        private long startDate;
+        private long endDate;
         private Double expectedDonationAmount;
 
         public void finalizeHeader(List<Transaction> transactions) {

@@ -1,5 +1,7 @@
 package org.example.cryptography;
 
+import org.example.exception.CryptographyException;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,17 +41,25 @@ public class KeyPairService {
         }
     }
 
-    public static PublicKey getPublicKey(String userName) throws Exception {
-        String hashUserName = HasherService.hashSHA512(userName);
-        byte[] keyBytes = Files.readAllBytes(Paths.get(Configuration.KEY_PAIR_FILE_PATH + hashUserName + Configuration.PUBLICKEY));
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        return KeyFactory.getInstance(Configuration.RSA_ALGORITHM).generatePublic(spec);
+    public static PublicKey getPublicKey(String userName) throws CryptographyException {
+        try {
+            String hashUserName = HasherService.hashSHA512(userName);
+            byte[] keyBytes = Files.readAllBytes(Paths.get(Configuration.KEY_PAIR_FILE_PATH + hashUserName + Configuration.PUBLICKEY));
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            return KeyFactory.getInstance(Configuration.RSA_ALGORITHM).generatePublic(spec);
+        }catch (Exception e){
+            throw new CryptographyException();
+        }
     }
 
-    public static PrivateKey getPrivateKey(String userName) throws Exception {
-        String hashUserName = HasherService.hashSHA512(userName);
-        byte[] keyBytes = Files.readAllBytes(Paths.get(Configuration.KEY_PAIR_FILE_PATH + hashUserName + Configuration.PRIVATEKEY));
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        return KeyFactory.getInstance(Configuration.RSA_ALGORITHM).generatePrivate(spec);
+    public static PrivateKey getPrivateKey(String userName) throws CryptographyException {
+        try {
+            String hashUserName = HasherService.hashSHA512(userName);
+            byte[] keyBytes = Files.readAllBytes(Paths.get(Configuration.KEY_PAIR_FILE_PATH + hashUserName + Configuration.PRIVATEKEY));
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            return KeyFactory.getInstance(Configuration.RSA_ALGORITHM).generatePrivate(spec);
+        }catch (Exception e){
+            throw new CryptographyException();
+        }
     }
 }

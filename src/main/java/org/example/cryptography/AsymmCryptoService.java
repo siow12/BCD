@@ -1,6 +1,7 @@
 package org.example.cryptography;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.example.exception.CryptographyException;
 
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
@@ -19,35 +20,43 @@ public class AsymmCryptoService {
         }
     }
 
-    public static String encrypt( String input, String userName) throws Exception{
-        PublicKey publicKey = KeyPairService.getPublicKey(userName);
-        String cipherText = null;
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        //encrypt
-        byte[] enBytes = null;
-        for (int i = 0; i < input.length(); i += 64) {  
-          byte[] cipherBytes = cipher.doFinal(ArrayUtils.subarray(input.getBytes(), i,i + 64));  
-          enBytes = ArrayUtils.addAll(enBytes, cipherBytes);  
-        }
-        cipherText = Base64.getEncoder().encodeToString(enBytes);
+    public static String encrypt( String input, String userName) throws CryptographyException{
+        try {
+            PublicKey publicKey = KeyPairService.getPublicKey(userName);
+            String cipherText = null;
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            //encrypt
+            byte[] enBytes = null;
+            for (int i = 0; i < input.length(); i += 64) {
+                byte[] cipherBytes = cipher.doFinal(ArrayUtils.subarray(input.getBytes(), i,i + 64));
+                enBytes = ArrayUtils.addAll(enBytes, cipherBytes);
+            }
+            cipherText = Base64.getEncoder().encodeToString(enBytes);
 
-        return cipherText;
+            return cipherText;
+        }catch (Exception e){
+            throw new CryptographyException();
+        }
     }
 
     /**
      * decrypt(String, PrivateKey)
      */
-    public static String decrypt( String cipherText, String userName ) throws Exception{
-      PrivateKey privateKey = KeyPairService.getPrivateKey(userName);
-      cipher.init(Cipher.DECRYPT_MODE, privateKey);
-      
-      byte[] byteArray = Base64.getDecoder().decode( cipherText.getBytes() ) ;
-      
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < byteArray.length; i += 128) {
-          byte[] doFinal = cipher.doFinal(ArrayUtils.subarray(byteArray, i, i + 128));
-          sb.append(new String(doFinal));
+    public static String decrypt( String cipherText, String userName ) throws CryptographyException {
+      try {
+          PrivateKey privateKey = KeyPairService.getPrivateKey(userName);
+          cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+          byte[] byteArray = Base64.getDecoder().decode( cipherText.getBytes() ) ;
+
+          StringBuilder sb = new StringBuilder();
+          for (int i = 0; i < byteArray.length; i += 128) {
+              byte[] doFinal = cipher.doFinal(ArrayUtils.subarray(byteArray, i, i + 128));
+              sb.append(new String(doFinal));
+          }
+          return sb.toString();
+      }catch (Exception e){
+          throw new CryptographyException();
       }
-      return sb.toString();
     }
 }

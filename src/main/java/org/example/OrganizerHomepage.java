@@ -128,14 +128,21 @@ public class OrganizerHomepage extends javax.swing.JFrame {
 
     private void viewCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewCampaignButtonActionPerformed
         // TODO add your handling code here:
+
+        this.setVisible(false);
+        Main.organizerViewCampaign.setVisible(true);
     }//GEN-LAST:event_viewCampaignButtonActionPerformed
 
     private void addCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCampaignButtonActionPerformed
         // TODO add your handling code here:
+
+        this.setVisible(false);
+        Main.organizerAddCampaign.setVisible(true);
     }//GEN-LAST:event_addCampaignButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     /**

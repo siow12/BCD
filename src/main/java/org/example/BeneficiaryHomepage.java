@@ -136,6 +136,7 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     /**

@@ -163,6 +163,9 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
+        this.setVisible(false);
+        Main.organizerHomePage.setVisible(true);
+
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**

@@ -156,10 +156,15 @@ public class RegisterPage extends javax.swing.JFrame {
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         // TODO add your handling code here:
+
+        this.setVisible(false);
+        Main.loginPage.setVisible(true);
     }//GEN-LAST:event_confirmButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
+        this.setVisible(false);
+        Main.loginPage.setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
