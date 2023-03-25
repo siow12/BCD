@@ -42,7 +42,7 @@ public class DonorHomepage extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        jLabel1.setText("Campaign");
+        jLabel1.setText("Donor Homepage");
 
         campaignTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -62,17 +62,6 @@ public class DonorHomepage extends javax.swing.JFrame {
         });
         campaignTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(campaignTable);
-        if (campaignTable.getColumnModel().getColumnCount() > 0) {
-            campaignTable.getColumnModel().getColumn(0).setResizable(false);
-            campaignTable.getColumnModel().getColumn(1).setResizable(false);
-            campaignTable.getColumnModel().getColumn(2).setResizable(false);
-            campaignTable.getColumnModel().getColumn(3).setResizable(false);
-            campaignTable.getColumnModel().getColumn(4).setResizable(false);
-            campaignTable.getColumnModel().getColumn(5).setResizable(false);
-            campaignTable.getColumnModel().getColumn(6).setResizable(false);
-            campaignTable.getColumnModel().getColumn(7).setResizable(false);
-            campaignTable.getColumnModel().getColumn(8).setResizable(false);
-        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -84,7 +73,7 @@ public class DonorHomepage extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 828, Short.MAX_VALUE)))
+                        .addGap(0, 702, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(

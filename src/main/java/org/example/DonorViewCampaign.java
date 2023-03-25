@@ -69,10 +69,7 @@ public class DonorViewCampaign extends javax.swing.JFrame {
 
         transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "From", "To", "Time", "Signature"
@@ -86,13 +83,8 @@ public class DonorViewCampaign extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        transactionTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(transactionTable);
-        if (transactionTable.getColumnModel().getColumnCount() > 0) {
-            transactionTable.getColumnModel().getColumn(0).setResizable(false);
-            transactionTable.getColumnModel().getColumn(1).setResizable(false);
-            transactionTable.getColumnModel().getColumn(2).setResizable(false);
-            transactionTable.getColumnModel().getColumn(3).setResizable(false);
-        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
