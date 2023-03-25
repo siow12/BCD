@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -26,17 +27,61 @@ public class Block implements Serializable {
         finalizeBlock();
     }
 
-    public Block(int index, String previousHash, long campaignId, List<Transaction> transactions) {
+    public Block(int index, String previousHash, long campaignId, String campaignName, String description, String address, String organizerName, String beneficiary, Double expectedAmount, long startDate, long endDate, List<Transaction> transactions) {
         this.header = new Header();
         this.header.index = index;
         this.header.previousHash = previousHash;
         this.header.campaignId = campaignId;
+        this.header.campaignName = campaignName;
+        this.header.description = description;
+        this.header.address = address;
+        this.header.organizerName = organizerName;
+        this.header.beneficiary = beneficiary;
+        this.header.startDate = startDate;
+        this.header.endDate = endDate;
+        this.header.expectedDonationAmount = expectedAmount;
         this.header.timeStamp = Instant.now().toEpochMilli();
         this.transactions = transactions;
         this.header.finalizeHeader(transactions);
         finalizeBlock();
     }
 
+    private byte[] getBytes(Block block) {
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(baos);
+        ) {
+            out.writeObject(block);
+            return baos.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public void finalizeBlock() {
+        byte[] blockBytes = getBytes(this);
+        this.header.currentHash = HasherService.hash(blockBytes);
+    }
+
+    public void finalizeHeader() {
+        this.header.finalizeHeader(this.transactions);
+    }
+
+    public String getDetail() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Campaign Id: ").append(this.header.campaignId).append("\n")
+                .append("Campaign Name: ").append(this.header.campaignName).append("\n")
+                .append("Campaign Description: ").append(this.header.description).append("\n")
+                .append("Organizer: ").append(this.header.organizerName).append("\n")
+                .append("Address: ").append(this.header.address).append("\n")
+                .append("Beneficiary: ").append(this.header.beneficiary).append("\n")
+                .append("Expected Amount: ").append(this.header.expectedDonationAmount).append("\n")
+                .append("Start Date: ").append(new Date(this.header.startDate)).append("\n")
+                .append("End Date: ").append(new Date(this.header.endDate)).append("\n");
+        return builder.toString();
+    }
 
     @Data
     public static class Header implements Serializable {
@@ -63,30 +108,5 @@ public class Block implements Serializable {
             this.merkleRootStr = MerkleTreeService.getMerkleRoot(transactions);
         }
     }
-
-
-    private byte[] getBytes(Block block) {
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream out = new ObjectOutputStream(baos);
-        ) {
-            out.writeObject(block);
-            return baos.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
-    public void finalizeBlock(){
-        byte[] blockBytes = getBytes(this);
-        this.header.currentHash = HasherService.hash(blockBytes);
-    }
-
-    public void finalizeHeader(){
-        this.header.finalizeHeader(this.transactions);
-    }
-
 
 }

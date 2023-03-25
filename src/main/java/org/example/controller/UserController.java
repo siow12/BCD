@@ -10,6 +10,7 @@ import org.example.exception.UserExistException;
 import org.example.exception.UserNotFoundException;
 import org.example.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserController {
@@ -57,5 +58,9 @@ public class UserController {
             throw new InvalidCredentialException("Invalid credential");
         }
 
+    }
+
+    public static List<User> findAllBeneficairy(){
+        return userDB.getEntityStore().stream().filter(u->u.getRole().equals(User.Role.BENEFICIARY)).toList();
     }
 }

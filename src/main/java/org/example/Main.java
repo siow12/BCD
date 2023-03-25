@@ -32,6 +32,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+
+
         loginPage.setVisible(true);
         //Register and login
         //UserController.register("YC", "123", User.Role.DONOR);

@@ -4,6 +4,14 @@
  */
 package org.example;
 
+import org.example.controller.UserController;
+import org.example.exception.UserExistException;
+import org.example.model.User;
+
+import javax.swing.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
 /**
  *
  * @author Pc
@@ -15,6 +23,20 @@ public class RegisterPage extends javax.swing.JFrame {
      */
     public RegisterPage() {
         initComponents();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                rolesComboBox.addItem(User.Role.DONOR);
+                rolesComboBox.addItem(User.Role.ORGANIZER);
+                rolesComboBox.addItem(User.Role.BENEFICIARY);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+            }
+        });
     }
 
     /**
@@ -61,8 +83,6 @@ public class RegisterPage extends javax.swing.JFrame {
         });
 
         rolesLabel.setText("Roles:");
-
-        rolesComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Organizer", "Donater", "Beneficiary" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -133,20 +153,36 @@ public class RegisterPage extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         // TODO add your handling code here:
+        try{
+            if(usernameField.getText().isEmpty() || passwordField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Username or Password is empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            UserController.register(usernameField.getText(), passwordField.getText(), (String)rolesComboBox.getSelectedItem());
+            JOptionPane.showMessageDialog(null, "Register Successful!!");
+        }catch (UserExistException e){
+            JOptionPane.showMessageDialog(null, "UserName Exist, please enter other username!!","Error",JOptionPane.ERROR_MESSAGE);
+        }
 
         this.setVisible(false);
         Main.loginPage.setVisible(true);
+        usernameField.setText("");
+        passwordField.setText("");
+        rolesComboBox.setSelectedIndex(0);
     }//GEN-LAST:event_confirmButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
         Main.loginPage.setVisible(true);
+        rolesComboBox.removeAllItems();
     }//GEN-LAST:event_cancelButtonActionPerformed
+
 
     /**
      * @param args the command line arguments

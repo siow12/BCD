@@ -160,8 +160,8 @@ public class DonorViewCampaign extends javax.swing.JFrame {
     private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyButtonActionPerformed
         // TODO add your handling code here:
 
-        this.setVisible(false);
-        Main.donorHomePage.setVisible(true);
+//        this.setVisible(false);
+//        Main.donorHomePage.setVisible(true);
     }//GEN-LAST:event_verifyButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

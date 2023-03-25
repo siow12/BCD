@@ -142,6 +142,7 @@ public class LoginPage extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
@@ -175,7 +176,6 @@ public class LoginPage extends javax.swing.JFrame {
         switch (Main.currentUser.getRole()){
             case User.Role.DONOR -> {
                 Main.donorHomePage.setVisible(true);
-                Main.donorHomePage.loadAllCampaign();
             }
             case  User.Role.ORGANIZER -> {
                 Main.organizerHomePage.setVisible(true);

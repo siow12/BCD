@@ -4,17 +4,48 @@
  */
 package org.example;
 
+import org.example.blockchain.Block;
+import org.example.blockchain.Blockchain;
+import org.example.blockchain.Transaction;
+import org.example.controller.UserController;
+import org.example.cryptography.SignatureService;
+import org.example.model.User;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Pc
  */
 public class OrganizerAddCampaign extends javax.swing.JFrame {
 
+
     /**
      * Creates new form Campaign
      */
     public OrganizerAddCampaign() {
         initComponents();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                organizerNameField.setText(Main.currentUser.getUserName());
+                List<String> beneficiaryName = UserController.findAllBeneficairy()
+                        .stream().map(User::getUserName).toList();
+                beneficiaryName.forEach(b->beneficiaryList.addItem(b));
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+            }
+        });
     }
 
     /**
@@ -45,7 +76,7 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         addressTextArea = new javax.swing.JTextArea();
         beneficiaryLabel = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        beneficiaryList = new javax.swing.JComboBox<>();
         expectedAmountLabel = new javax.swing.JLabel();
         expectedAmountField = new javax.swing.JTextField();
 
@@ -60,11 +91,7 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
 
         startDateLabel.setText("Start Date:");
 
-        organizerNameField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                organizerNameFieldActionPerformed(evt);
-            }
-        });
+        organizerNameField.setEditable(false);
 
         addButton.setText("Add");
         addButton.addActionListener(new java.awt.event.ActionListener() {
@@ -124,7 +151,7 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
                         .addGap(74, 74, 74)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(beneficiaryList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(organizerNameField)
                                 .addComponent(campaignNameField)
                                 .addComponent(jScrollPane1)
@@ -163,7 +190,7 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
                                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(addressLabel))
                                         .addGap(18, 18, 18)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(beneficiaryList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(beneficiaryLabel))
                                 .addGap(18, 18, 18)
                                 .addComponent(expectedAmountField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -209,16 +236,69 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void organizerNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_organizerNameFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_organizerNameFieldActionPerformed
-
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
+        try{
+            String description = desTextArea.getText();
+            String name = campaignNameField.getText();
+            String address = addressTextArea.getText();
+            String beneficiary = (String)beneficiaryList.getSelectedItem();
+            Double expectedAmount = Double.parseDouble(expectedAmountField.getText());
+            long startDate = startDateChooser.getDate().getTime();
+            long endDate = endDateChooser.getDate().getTime();
+
+            if(
+                    description.isEmpty()
+                    || name.isEmpty()
+                    || address.isEmpty()
+                    || (beneficiary == null || beneficiary.isEmpty())
+                    || startDate == 0
+                    || endDate == 0
+
+            ){
+                JOptionPane.showMessageDialog(null, "Incomplete input!!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Block.Header latestHeader = Blockchain.getBlocks().getLast().getHeader();
+            Transaction initialTrasaction = Transaction.builder()
+                    .from(Main.currentUser.getUserName())
+                    .to(null)
+                    .timestamp(
+                            Instant.now().toEpochMilli())
+                    .build();
+
+            initialTrasaction.setSignature(SignatureService.sign(initialTrasaction.toString(),Main.currentUser.getUserName()));
+            Block block = new Block(latestHeader.getIndex() + 1,
+                    latestHeader.getCurrentHash(),
+                    latestHeader.getCampaignId() + 1,
+                    name,
+                    description,
+                    address,
+                    Main.currentUser.getUserName(),
+                    beneficiary,
+                    expectedAmount,
+                    startDate,
+                    endDate,
+                    new ArrayList<>(List.of(initialTrasaction)));
+
+            Blockchain.newBlock(block);
+            JOptionPane.showMessageDialog(null, "Campaign " + block.getHeader().getCampaignId() + " added!!");
+
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Invalid amount!!", "Error", JOptionPane.ERROR_MESSAGE);
+        }catch (Exception e){
+
+        }
+
+
+        this.setVisible(false);
+        Main.organizerHomePage.setVisible(true);
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
+        this.setVisible(false);
+        Main.organizerHomePage.setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
@@ -228,7 +308,7 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -262,6 +342,7 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
     private javax.swing.JLabel addressLabel;
     private javax.swing.JTextArea addressTextArea;
     private javax.swing.JLabel beneficiaryLabel;
+    private javax.swing.JComboBox<String> beneficiaryList;
     private javax.swing.JTextField campaignNameField;
     private javax.swing.JLabel campaignNameLabel;
     private javax.swing.JButton cancelButton;
@@ -271,7 +352,6 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
     private javax.swing.JLabel endDateLabel;
     private javax.swing.JTextField expectedAmountField;
     private javax.swing.JLabel expectedAmountLabel;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

@@ -4,17 +4,47 @@
  */
 package org.example;
 
+import org.example.blockchain.Block;
+import org.example.blockchain.Blockchain;
+import org.example.exception.DataNotFoundException;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 /**
  *
  * @author Pc
  */
 public class OrganizerHomepage extends javax.swing.JFrame {
 
+    private DefaultTableModel tableModel;
+
     /**
      * Creates new form OrganizerHomepage
      */
     public OrganizerHomepage() {
         initComponents();
+
+        tableModel = (DefaultTableModel) campaignTable.getModel();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {//Load data
+                super.componentShown(e);
+                loadTable();
+                System.out.println();
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {//Reset data
+                super.componentHidden(e);
+                tableModel.setRowCount(0);
+            }
+        });
     }
 
     /**
@@ -62,10 +92,7 @@ public class OrganizerHomepage extends javax.swing.JFrame {
 
         campaignTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Campaign ID", "Campaign Name", "Description", "Address", "Organizer Name", "Beneficiary", "Start Date", "End Date", "Expectation Donation Amount"
@@ -79,18 +106,10 @@ public class OrganizerHomepage extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        campaignTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        campaignTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        campaignTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(campaignTable);
-        if (campaignTable.getColumnModel().getColumnCount() > 0) {
-            campaignTable.getColumnModel().getColumn(0).setResizable(false);
-            campaignTable.getColumnModel().getColumn(1).setResizable(false);
-            campaignTable.getColumnModel().getColumn(2).setResizable(false);
-            campaignTable.getColumnModel().getColumn(3).setResizable(false);
-            campaignTable.getColumnModel().getColumn(4).setResizable(false);
-            campaignTable.getColumnModel().getColumn(5).setResizable(false);
-            campaignTable.getColumnModel().getColumn(6).setResizable(false);
-            campaignTable.getColumnModel().getColumn(7).setResizable(false);
-            campaignTable.getColumnModel().getColumn(8).setResizable(false);
-        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -99,15 +118,17 @@ public class OrganizerHomepage extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 835, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addCampaignButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(viewCampaignButton))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(viewCampaignButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                            .addComponent(addCampaignButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(logoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,7 +156,9 @@ public class OrganizerHomepage extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,6 +170,18 @@ public class OrganizerHomepage extends javax.swing.JFrame {
 
     private void viewCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewCampaignButtonActionPerformed
         // TODO add your handling code here:
+        try {
+            int selectedRow = campaignTable.getSelectedRow();
+            if (selectedRow == -1) {
+                campaignTable.setRowSelectionInterval(0, 0);
+                selectedRow = 0;
+            }
+            long campaignId = (long) campaignTable.getValueAt(selectedRow, 0);
+            Block block = Blockchain.findBlockByCampaignId(campaignId).orElseThrow(() -> new DataNotFoundException("Campaign Not Found"));
+            Main.organizerViewCampaign.loadData(block);
+        } catch (DataNotFoundException e) {
+
+        }
 
         this.setVisible(false);
         Main.organizerViewCampaign.setVisible(true);
@@ -163,6 +198,34 @@ public class OrganizerHomepage extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_logoutButtonActionPerformed
+
+    public void loadTable(){
+
+        tableModel.setRowCount(0);
+
+        List<Block> campaignList = Blockchain.findBlockByOrganizer(Main.currentUser.getUserName());
+
+        campaignList.forEach(c->{
+            Block.Header header = c.getHeader();
+            Object[] row = new Object[9];
+            row[0] = header.getCampaignId();
+            row[1] = header.getCampaignName();
+            row[2] = header.getDescription();
+            row[3] = header.getAddress();
+            row[4] = header.getOrganizerName();
+            row[5] = header.getBeneficiary();
+            row[6] = new Date(header.getStartDate()).toString();
+            row[7] = new Date(header.getEndDate()).toString();
+            row[8] = header.getExpectedDonationAmount().toString();
+            tableModel.addRow(row);
+        });
+        if(campaignTable.getRowCount() > 0){
+            campaignTable.setRowSelectionInterval(0,0);
+        }
+        System.out.println();
+
+    }
+
 
     /**
      * @param args the command line arguments

@@ -4,6 +4,8 @@
  */
 package org.example;
 
+import org.example.blockchain.Block;
+
 /**
  *
  * @author Pc
@@ -47,6 +49,7 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setText("Transaction");
 
+        detailsTextArea.setEditable(false);
         detailsTextArea.setColumns(20);
         detailsTextArea.setRows(5);
         jScrollPane2.setViewportView(detailsTextArea);
@@ -68,12 +71,11 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
             }
         });
 
+        totalAmountField.setEditable(false);
+
         transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "From", "To", "Time", "Signature"
@@ -87,13 +89,8 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        transactionTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(transactionTable);
-        if (transactionTable.getColumnModel().getColumnCount() > 0) {
-            transactionTable.getColumnModel().getColumn(0).setResizable(false);
-            transactionTable.getColumnModel().getColumn(1).setResizable(false);
-            transactionTable.getColumnModel().getColumn(2).setResizable(false);
-            transactionTable.getColumnModel().getColumn(3).setResizable(false);
-        }
 
         totalAmountLabel.setText("Total Amount:");
 
@@ -169,6 +166,7 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void donateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_donateButtonActionPerformed
@@ -215,6 +213,10 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                 new OrganizerViewCampaign().setVisible(true);
             }
         });
+    }
+
+    public void loadData(Block block){
+        detailsTextArea.setText(block.getDetail());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

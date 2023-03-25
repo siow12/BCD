@@ -33,16 +33,69 @@ public class DonorHomepage extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        campaignTable = new javax.swing.JTable();
         addDonationButton = new javax.swing.JButton();
         viewCampaignButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        campaignTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         jLabel1.setText("Campaign");
+
+        campaignTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Campaign ID", "Campaign Name", "Description", "Address", "Organizer Name", "Beneficiary", "Start Date", "End Date", "Expected Donation Amount"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        campaignTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(campaignTable);
+        if (campaignTable.getColumnModel().getColumnCount() > 0) {
+            campaignTable.getColumnModel().getColumn(0).setResizable(false);
+            campaignTable.getColumnModel().getColumn(1).setResizable(false);
+            campaignTable.getColumnModel().getColumn(2).setResizable(false);
+            campaignTable.getColumnModel().getColumn(3).setResizable(false);
+            campaignTable.getColumnModel().getColumn(4).setResizable(false);
+            campaignTable.getColumnModel().getColumn(5).setResizable(false);
+            campaignTable.getColumnModel().getColumn(6).setResizable(false);
+            campaignTable.getColumnModel().getColumn(7).setResizable(false);
+            campaignTable.getColumnModel().getColumn(8).setResizable(false);
+        }
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 828, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
 
         addDonationButton.setText("Add Donation");
         addDonationButton.addActionListener(new java.awt.event.ActionListener() {
@@ -65,91 +118,35 @@ public class DonorHomepage extends javax.swing.JFrame {
             }
         });
 
-        campaignTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Campaign ID", "Campaign Name", "Description", "Address", "Organizer Name", "Beneficiary", "Start Date", "End Date", "Expected Donation Amount"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(campaignTable);
-        if (campaignTable.getColumnModel().getColumnCount() > 0) {
-            campaignTable.getColumnModel().getColumn(0).setResizable(false);
-            campaignTable.getColumnModel().getColumn(1).setResizable(false);
-            campaignTable.getColumnModel().getColumn(2).setResizable(false);
-            campaignTable.getColumnModel().getColumn(3).setResizable(false);
-            campaignTable.getColumnModel().getColumn(4).setResizable(false);
-            campaignTable.getColumnModel().getColumn(5).setResizable(false);
-            campaignTable.getColumnModel().getColumn(6).setResizable(false);
-            campaignTable.getColumnModel().getColumn(7).setResizable(false);
-            campaignTable.getColumnModel().getColumn(8).setResizable(false);
-        }
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(logoutButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addDonationButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(viewCampaignButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(34, 34, 34))))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(addDonationButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(viewCampaignButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(logoutButton))
-                    .addComponent(jScrollPane1))
-                .addContainerGap())
-        );
-
-        addDonationButton.getAccessibleContext().setAccessibleName("addDonationButton");
-        viewCampaignButton.getAccessibleContext().setAccessibleName("viewCampaignButton");
-        logoutButton.getAccessibleContext().setAccessibleName("logoutButton");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(addDonationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(viewCampaignButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 21, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addDonationButton)
+                    .addComponent(viewCampaignButton)
+                    .addComponent(logoutButton))
+                .addGap(0, 12, Short.MAX_VALUE))
         );
+
+        addDonationButton.getAccessibleContext().setAccessibleName("addDonationButton");
+        viewCampaignButton.getAccessibleContext().setAccessibleName("viewCampaignButton");
+        logoutButton.getAccessibleContext().setAccessibleName("logoutButton");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -170,6 +167,7 @@ public class DonorHomepage extends javax.swing.JFrame {
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     public void loadAllCampaign(){
