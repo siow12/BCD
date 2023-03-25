@@ -7,6 +7,7 @@ package org.example;
 import org.example.blockchain.Block;
 import org.example.blockchain.Blockchain;
 import org.example.blockchain.Transaction;
+import org.example.controller.TransactionController;
 import org.example.controller.UserController;
 import org.example.cryptography.SignatureService;
 import org.example.model.User;
@@ -259,15 +260,18 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Incomplete input!!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            Block.Header latestHeader = Blockchain.getBlocks().getLast().getHeader();
-            Transaction initialTrasaction = Transaction.builder()
+            Blockchain.getBlocks();//Load genesis block;
+            Block latestBlock = DBSingleton.getDb(Block.class).getEntityStore().getLast();
+            Block.Header latestHeader = latestBlock.getHeader();
+            Transaction initialTransaction = Transaction.builder()
+                    .transactionId(TransactionController.getNewTransactionId(latestBlock))
                     .from(Main.currentUser.getUserName())
                     .to(null)
                     .timestamp(
                             Instant.now().toEpochMilli())
                     .build();
 
-            initialTrasaction.setSignature(SignatureService.sign(initialTrasaction.toString(),Main.currentUser.getUserName()));
+            initialTransaction.setSignature(SignatureService.sign(initialTransaction.toString(),Main.currentUser.getUserName()));
             Block block = new Block(latestHeader.getIndex() + 1,
                     latestHeader.getCurrentHash(),
                     latestHeader.getCampaignId() + 1,
@@ -279,15 +283,13 @@ public class OrganizerAddCampaign extends javax.swing.JFrame {
                     expectedAmount,
                     startDate,
                     endDate,
-                    new ArrayList<>(List.of(initialTrasaction)));
+                    new ArrayList<>(List.of(initialTransaction)));
 
             Blockchain.newBlock(block);
             JOptionPane.showMessageDialog(null, "Campaign " + block.getHeader().getCampaignId() + " added!!");
 
         }catch (NumberFormatException e){
             JOptionPane.showMessageDialog(null, "Invalid amount!!", "Error", JOptionPane.ERROR_MESSAGE);
-        }catch (Exception e){
-
         }
 
 

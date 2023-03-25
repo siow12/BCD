@@ -4,11 +4,19 @@
  */
 package org.example;
 
+import org.example.blockchain.Block;
+import org.example.controller.TransactionController;
+import org.example.exception.DataNotFoundException;
+
+import javax.swing.*;
+
 /**
  *
  * @author Pc
  */
 public class Donation extends javax.swing.JFrame {
+
+    private Block currentCampaign;
 
     /**
      * Creates new form Donater
@@ -32,12 +40,10 @@ public class Donation extends javax.swing.JFrame {
         organizerNameLabel = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
         campaignNameLabel = new javax.swing.JLabel();
-        dateLabel = new javax.swing.JLabel();
         nameField = new javax.swing.JTextField();
         organizerNameField = new javax.swing.JTextField();
         campaignNameField = new javax.swing.JTextField();
         totalAmountField = new javax.swing.JTextField();
-        dateChooser = new com.toedter.calendar.JDateChooser();
         confirmButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
@@ -54,7 +60,11 @@ public class Donation extends javax.swing.JFrame {
 
         campaignNameLabel.setText("Campaign Name:");
 
-        dateLabel.setText("Date:");
+        nameField.setEditable(false);
+
+        organizerNameField.setEditable(false);
+
+        campaignNameField.setEditable(false);
 
         confirmButton.setText("Confirm");
         confirmButton.addActionListener(new java.awt.event.ActionListener() {
@@ -83,7 +93,6 @@ public class Donation extends javax.swing.JFrame {
                             .addComponent(organizerNameLabel)
                             .addComponent(campaignNameLabel)
                             .addComponent(totalAmountLabel)
-                            .addComponent(dateLabel)
                             .addComponent(confirmButton))
                         .addGap(54, 54, 54)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -91,8 +100,7 @@ public class Donation extends javax.swing.JFrame {
                                 .addComponent(nameField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                                 .addComponent(organizerNameField)
                                 .addComponent(campaignNameField)
-                                .addComponent(totalAmountField)
-                                .addComponent(dateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(totalAmountField))
                             .addComponent(cancelButton)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(161, 161, 161)
@@ -120,11 +128,7 @@ public class Donation extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(totalAmountLabel)
                     .addComponent(totalAmountField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(dateLabel)
-                    .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(58, 58, 58)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(confirmButton)
                     .addComponent(cancelButton))
@@ -135,12 +139,10 @@ public class Donation extends javax.swing.JFrame {
         organizerNameLabel.getAccessibleContext().setAccessibleName("organizerNameLabel");
         nameLabel.getAccessibleContext().setAccessibleName("nameLabel");
         campaignNameLabel.getAccessibleContext().setAccessibleName("campaignNameLabel");
-        dateLabel.getAccessibleContext().setAccessibleName("dateLabel");
         nameField.getAccessibleContext().setAccessibleName("nameField");
         organizerNameField.getAccessibleContext().setAccessibleName("organizerNameField");
         campaignNameField.getAccessibleContext().setAccessibleName("campaignNameField");
         totalAmountField.getAccessibleContext().setAccessibleName("totalAmountField");
-        dateChooser.getAccessibleContext().setAccessibleName("dateChooser");
         confirmButton.getAccessibleContext().setAccessibleName("confirmButton");
         cancelButton.getAccessibleContext().setAccessibleName("cancelButton");
 
@@ -162,9 +164,23 @@ public class Donation extends javax.swing.JFrame {
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         // TODO add your handling code here:
+        try {
+            String amount = totalAmountField.getText();
+            if (amount.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Incomplete input!!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            TransactionController.addDonationFromDonor(Main.currentUser, currentCampaign.getHeader().getCampaignId(), Double.parseDouble(amount));
+            JOptionPane.showMessageDialog(null, "New Donation Added");
+
+
+        } catch (DataNotFoundException e) {
+
+        }
 
         this.setVisible(false);
         Main.donorHomePage.setVisible(true);
+        Main.donorHomePage.loadTable();
     }//GEN-LAST:event_confirmButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -172,6 +188,13 @@ public class Donation extends javax.swing.JFrame {
         this.setVisible(false);
         Main.donorHomePage.setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    public void setCurrentCampaign(Block block){
+        this.currentCampaign = block;
+        campaignNameField.setText(block.getHeader().getCampaignName());
+        nameField.setText(Main.currentUser.getUserName());
+        organizerNameField.setText(block.getHeader().getOrganizerName());
+    }
 
     /**
      * @param args the command line arguments
@@ -220,8 +243,6 @@ public class Donation extends javax.swing.JFrame {
     private javax.swing.JLabel campaignNameLabel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton confirmButton;
-    private com.toedter.calendar.JDateChooser dateChooser;
-    private javax.swing.JLabel dateLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField nameField;

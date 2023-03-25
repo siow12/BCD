@@ -8,6 +8,7 @@ import org.example.DBSingleton;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Blockchain {
@@ -22,7 +23,7 @@ public class Blockchain {
         }
     }
 
-    public static void newBlock(Block block){
+    public static void newBlock(Block block) {
         db.getEntityStore().add(block);
         db.save();
         log.info("New campaign {} added!!", block.getHeader().getCampaignId());
@@ -34,21 +35,17 @@ public class Blockchain {
             Block genesis = new Block("0");
             newBlock(genesis);
         }
-        return db.getEntityStore();
+        return db.getEntityStore().stream().filter(block -> block.getHeader().getIndex() != 0).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    public static Optional<Block> findBlockByCampaignId(long campaignId ) {
-        return db.getEntityStore().stream().filter(b->b.getHeader().getCampaignId()== campaignId).findFirst();
+    public static Optional<Block> findBlockByCampaignId(long campaignId) {
+        return getBlocks().stream().filter(b -> b.getHeader().getCampaignId() == campaignId).findFirst();
     }
 
 
     public static List<Block> findBlockByOrganizer(String organizer) {
-        return db.getEntityStore().stream().filter(b->{
-            String name = b.getHeader().getOrganizerName();
-            return ((name != null) && name.equals(organizer));
-        }).toList();
+        return getBlocks().stream().filter(b -> b.getHeader().getOrganizerName().equals(organizer)).toList();
     }
-
 
 
 }

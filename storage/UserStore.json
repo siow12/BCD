@@ -1,0 +1,21 @@
+[ {
+  "userName" : "D1",
+  "passwordHash" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "role" : "DONOR"
+}, {
+  "userName" : "O1",
+  "passwordHash" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "role" : "ORGANIZER"
+}, {
+  "userName" : "B1",
+  "passwordHash" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "role" : "BENEFICIARY"
+}, {
+  "userName" : "O2",
+  "passwordHash" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "role" : "ORGANIZER"
+}, {
+  "userName" : "D2",
+  "passwordHash" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "role" : "DONOR"
+} ]

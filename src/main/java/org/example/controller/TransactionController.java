@@ -3,6 +3,7 @@ package org.example.controller;
 
 import org.example.DB;
 import org.example.DBSingleton;
+import org.example.Main;
 import org.example.blockchain.Block;
 import org.example.blockchain.Blockchain;
 import org.example.blockchain.Transaction;
@@ -27,24 +28,35 @@ public class TransactionController {
         }
     }
 
+    public static long getNewTransactionId(Block block){
+        if(block.getTransactions().size()==0){
+            return 10000;
+        }
+        return block.getTransactions().get(block.getTransactions().size()-1).getTransactionId()+1;
+    }
+
     //Collect donation from donor
-    public static void addDonationFromDonor(User from, String toCampaignId, double amount) throws DataNotFoundException{
-        Optional<Block> campaignOptional = Blockchain.findBlockByCampaignId(Long.parseLong(toCampaignId));
+    public static void addDonationFromDonor(User from, long toCampaignId, double amount) throws DataNotFoundException {
+        Optional<Block> campaignOptional = Blockchain.findBlockByCampaignId(toCampaignId);
         if (campaignOptional.isEmpty()) {
             throw new DataNotFoundException("Campaign Not Found");
         }
         Block campaign = campaignOptional.get();
 
         Transaction transaction = Transaction.builder()
-                                             .from(from.getUserName())
-                                             .to(toCampaignId)
-                                             .timestamp(Instant.now()
-                                                               .toEpochMilli())
-                                             .build();
+                .transactionId(getNewTransactionId(campaign))
+                .from(from.getUserName())
+                .to(String.valueOf(toCampaignId))
+                .timestamp(Instant.now()
+                        .toEpochMilli())
+                .build();
 
         var transactionData = DonationFromDonorTransactionData.builder()
-                                                                                           .amount(amount)
-                                                                                           .build();
+                .amount(amount)
+                .campaignName(campaign.getHeader().getCampaignName())
+                .donorName(from.getUserName())
+                .organizerName(campaign.getHeader().getOrganizerName())
+                .build();
         transaction.setData(transactionData);
         transaction.setSignature(SignatureService.sign(transaction.toString(), from.getUserName()));
         campaign.getTransactions().add(transaction);
@@ -53,7 +65,7 @@ public class TransactionController {
     }
 
     //Give the donation to beneficiary
-    public static void addDonationToBnfcy(User from, String beneficiary, String campaignId, double amount) throws DataNotFoundException{
+    public static void addDonationToBnfcy(User from, String beneficiary, String campaignId, double amount) throws DataNotFoundException {
         Optional<Block> campaignOptional = Blockchain.findBlockByCampaignId(Long.parseLong(campaignId));
         if (campaignOptional.isEmpty()) {
             throw new DataNotFoundException("Campaign Not Found");
@@ -61,15 +73,16 @@ public class TransactionController {
         Block campaign = campaignOptional.get();
 
         Transaction transaction = Transaction.builder()
-                                             .from(from.getUserName())
-                                             .to(beneficiary)
-                                             .timestamp(Instant.now()
-                                                               .toEpochMilli())
-                                             .build();
+                .transactionId(getNewTransactionId(campaign))
+                .from(from.getUserName())
+                .to(beneficiary)
+                .timestamp(Instant.now()
+                        .toEpochMilli())
+                .build();
 
         var transactionData = DonationFromOrgToBnfcyTransactionData.builder()//TODO NGO TO BNFCY
-                                                                   .amount(amount)
-                                                                   .build();
+                .amount(amount)
+                .build();
         transaction.setData(transactionData);
         transaction.setSignature(SignatureService.sign(transaction.toString(), from.getUserName()));
         campaign.getTransactions().add(transaction);
@@ -78,13 +91,24 @@ public class TransactionController {
     }
 
 
-    public static List<Transaction> findAllTransactionByCampaignIdAndDonor(long campaignId,User donor) throws DataNotFoundException {
+    public static List<Transaction> findAllTransactionByCampaignIdAndDonor(long campaignId, User donor) throws DataNotFoundException {
         Optional<Block> campaignOptional = Blockchain.findBlockByCampaignId(campaignId);
         if (campaignOptional.isEmpty()) {
             throw new DataNotFoundException("Campaign Not Found");
         }
         Block campaign = campaignOptional.get();
 
-        return campaign.getTransactions().stream().filter(t->t.getFrom().equals(donor.getUserName())).toList();
+        return campaign.getTransactions().stream().filter(t -> t.getFrom().equals(donor.getUserName())).toList();
+    }
+
+    public static List<Transaction> findAllTransactionFromDonor(long campaignId) throws DataNotFoundException {
+        Optional<Block> campaignOptional = Blockchain.findBlockByCampaignId(campaignId);
+        if (campaignOptional.isEmpty()) {
+            throw new DataNotFoundException("Campaign Not Found");
+        }
+        Block campaign = campaignOptional.get();
+
+        return campaign.getTransactions().stream().filter(t->(t.getData() != null) && (t.getData() instanceof DonationFromDonorTransactionData)).toList();
+
     }
 }

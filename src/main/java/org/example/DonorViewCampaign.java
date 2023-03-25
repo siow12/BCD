@@ -4,17 +4,36 @@
  */
 package org.example;
 
+import org.example.blockchain.Block;
+import org.example.blockchain.Transaction;
+import org.example.controller.TransactionController;
+import org.example.exception.DataNotFoundException;
+import org.example.model.transaction.DonationFromDonorTransactionData;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+
 /**
  *
  * @author Pc
  */
 public class DonorViewCampaign extends javax.swing.JFrame {
 
+    private Block currentBlock;
+
+    private DefaultTableModel tableModel;
+
     /**
      * Creates new form ViewCampaign
      */
     public DonorViewCampaign() {
         initComponents();
+        tableModel =  (DefaultTableModel) transactionTable.getModel();
     }
 
     /**
@@ -32,15 +51,16 @@ public class DonorViewCampaign extends javax.swing.JFrame {
         detailsTextArea = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        verifyButton = new javax.swing.JButton();
+        verifyStatementButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         transactionTable = new javax.swing.JTable();
+        verifyTransactionButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        jLabel1.setText("View Campaign");
+        jLabel1.setText("Donor View Campaign");
 
         detailsTextArea.setColumns(20);
         detailsTextArea.setRows(5);
@@ -53,10 +73,10 @@ public class DonorViewCampaign extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel3.setText("Details");
 
-        verifyButton.setText("Verify");
-        verifyButton.addActionListener(new java.awt.event.ActionListener() {
+        verifyStatementButton.setText("Verify Statement");
+        verifyStatementButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                verifyButtonActionPerformed(evt);
+                verifyStatementButtonActionPerformed(evt);
             }
         });
 
@@ -72,11 +92,11 @@ public class DonorViewCampaign extends javax.swing.JFrame {
 
             },
             new String [] {
-                "From", "To", "Time", "Signature"
+                "Transaction ID", "From", "To", "Time", "Signature", "Amount"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -85,6 +105,13 @@ public class DonorViewCampaign extends javax.swing.JFrame {
         });
         transactionTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(transactionTable);
+
+        verifyTransactionButton.setText("Verify Transaction");
+        verifyTransactionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verifyTransactionButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -103,10 +130,11 @@ public class DonorViewCampaign extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(verifyButton)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(verifyStatementButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGap(104, 104, 104)
                                     .addComponent(cancelButton))
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(verifyTransactionButton))))
                 .addContainerGap(78, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -119,20 +147,22 @@ public class DonorViewCampaign extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(verifyButton)
-                            .addComponent(cancelButton)))
+                            .addComponent(verifyStatementButton)
+                            .addComponent(cancelButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(verifyTransactionButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(147, 147, 147))
         );
 
         jLabel2.getAccessibleContext().setAccessibleName("transactionLabel");
         jLabel3.getAccessibleContext().setAccessibleName("dataLabel");
-        verifyButton.getAccessibleContext().setAccessibleName("verifyButton");
+        verifyStatementButton.getAccessibleContext().setAccessibleName("verifyButton");
         cancelButton.getAccessibleContext().setAccessibleName("cancelButton");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -149,18 +179,53 @@ public class DonorViewCampaign extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyButtonActionPerformed
+    private void verifyStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyStatementButtonActionPerformed
         // TODO add your handling code here:
 
 //        this.setVisible(false);
 //        Main.donorHomePage.setVisible(true);
-    }//GEN-LAST:event_verifyButtonActionPerformed
+    }//GEN-LAST:event_verifyStatementButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
         Main.donorHomePage.setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void verifyTransactionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyTransactionButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verifyTransactionButtonActionPerformed
+
+    public void loadData(Block block) {
+        this.currentBlock = block;
+        detailsTextArea.setText(block.getDetail());
+
+        try {
+            List<Transaction> transactions = TransactionController.findAllTransactionByCampaignIdAndDonor(currentBlock.getHeader().getCampaignId(), Main.currentUser);
+
+            transactions.forEach(c -> {
+                Object[] row = new Object[6];
+                row[0] = c.getTransactionId();
+                row[1] = c.getFrom();
+                row[2] = c.getTo();
+                row[3] = getLocalDate(c.getTimestamp());
+                row[4] = c.getSignature();
+                row[5] = ((DonationFromDonorTransactionData) c.getData()).getAmount();
+                tableModel.addRow(row);
+            });
+            if (transactionTable.getRowCount() > 0) {
+                transactionTable.setRowSelectionInterval(0, 0);
+            }
+        } catch (DataNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+    private LocalDate getLocalDate(long timestamp) {
+        Instant instant = Instant.ofEpochSecond(timestamp / 1000);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return localDateTime.toLocalDate();
+    }
 
     /**
      * @param args the command line arguments
@@ -210,6 +275,7 @@ public class DonorViewCampaign extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable transactionTable;
-    private javax.swing.JButton verifyButton;
+    private javax.swing.JButton verifyStatementButton;
+    private javax.swing.JButton verifyTransactionButton;
     // End of variables declaration//GEN-END:variables
 }

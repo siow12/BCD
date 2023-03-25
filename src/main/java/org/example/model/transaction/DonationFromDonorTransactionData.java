@@ -12,5 +12,6 @@ import java.io.Serializable;
 public class DonationFromDonorTransactionData implements Serializable {
     private Double amount;
     private String donorName;
-    private String message;
+    private String organizerName;
+    private String campaignName;
 }

@@ -1,0 +1,123 @@
+[ {
+  "header" : {
+    "index" : 0,
+    "currentHash" : "6137d60767336fc57313ffb4c1fb617999b15e5872d734d589a93ae6dce0dc1f",
+    "previousHash" : "0",
+    "timeStamp" : 1679758858299,
+    "merkleRootStr" : null,
+    "campaignId" : 10000,
+    "campaignName" : null,
+    "description" : null,
+    "address" : null,
+    "organizerName" : null,
+    "beneficiary" : null,
+    "startDate" : 0,
+    "endDate" : 0,
+    "expectedDonationAmount" : null
+  },
+  "transactions" : [ ],
+  "detail" : "Campaign Id: 10000\nCampaign Name: null\nCampaign Description: null\nOrganizer: null\nAddress: null\nBeneficiary: null\nExpected Amount: null\nStart Date: 1970-01-01\nEnd Date: 1970-01-01\nTotal Collected Amount: 0.0\n",
+  "totalCollectedAmount" : 0.0
+}, {
+  "header" : {
+    "index" : 1,
+    "currentHash" : "e6e350d7e739795fb5701192f344a9798de5dae6a5a8abcac7d5a3cece02fbc0",
+    "previousHash" : "6137d60767336fc57313ffb4c1fb617999b15e5872d734d589a93ae6dce0dc1f",
+    "timeStamp" : 1679758935486,
+    "merkleRootStr" : "05b7c9486b4f524dab6c4a9e34d0df071798b2f951be6d2f8f33c2bf594dfd01",
+    "campaignId" : 10001,
+    "campaignName" : "CAM1",
+    "description" : "DES",
+    "address" : "ADDRESS",
+    "organizerName" : "O1",
+    "beneficiary" : "B1",
+    "startDate" : 1677600000000,
+    "endDate" : 1678290122619,
+    "expectedDonationAmount" : 12345.0
+  },
+  "transactions" : [ {
+    "transactionId" : 10000,
+    "from" : "O1",
+    "to" : null,
+    "timestamp" : 1679758935360,
+    "signature" : "gqHtNyYNuYKQsy/1l831HzohcOMrpLqHES9VHANFPhW82j6GHaHqw0rrh6WK7wtsXt3REDVqkBy8whCCmR5KM319av/S9zMjN7JazV9/IzkZOqJ9XnmJxRILilEQyWFpziINmVSPHbYfhaKvqXfZorceJQd2DDmMPkY4u5C49kE=",
+    "data" : null
+  }, {
+    "transactionId" : 10001,
+    "from" : "D1",
+    "to" : "10001",
+    "timestamp" : 1679759011591,
+    "signature" : "FIRKBTKPpSuvNYoPKTRGHLDYO226pZO1wFKpRlb4OzOuZtN+rCqXYRHHAozRaC4kT0XFzCN9h0Zf2+oaeLG0tDtUqJ+LT1F/bf0FrUAMilJ0L4Ivmx9Xk26j665D4/20uKJPpGhxMNd4YnpPUAtrR6Ef8Egsf2k86NX2GbHAatg=",
+    "data" : {
+      "amount" : 10.0,
+      "donorName" : "D1",
+      "organizerName" : "O1",
+      "campaignName" : "CAM1"
+    }
+  }, {
+    "transactionId" : 10002,
+    "from" : "D1",
+    "to" : "10001",
+    "timestamp" : 1679759022265,
+    "signature" : "WtbARhxpxgKMnBp3LFMhvTXAah2ZmspC4nNlpGsj/LU9IuXYsWavYg8zIjNImUfQK/oXSD0KhiGz3EjwO60AVjCT9NV1DlmVtPno5ROdShTYtPm2FVr4m07h0KV+BwkwFDxQRzNqFPYOL517ynDgkZkbvfB+vDQ65kiQkVJyJMg=",
+    "data" : {
+      "amount" : 12.0,
+      "donorName" : "D1",
+      "organizerName" : "O1",
+      "campaignName" : "CAM1"
+    }
+  }, {
+    "transactionId" : 10003,
+    "from" : "D2",
+    "to" : "10001",
+    "timestamp" : 1679762367275,
+    "signature" : "IzVyTvhOf4OTusXnsqW/NLBbOstE46ziXa/benATAyYa4ol7TFw3xg3pdeYxBFnWz0CULR3APHS3FnChzgucpmvnE02IG/jPEnxta1l1fHugAdNz4LKa59G5wWxj9kUW5td5RP3AbSFrjD1oN8WU7Vdi6sK7xT0Kswt3el4/2js=",
+    "data" : {
+      "amount" : 10.0,
+      "donorName" : "D2",
+      "organizerName" : "O1",
+      "campaignName" : "CAM1"
+    }
+  } ],
+  "detail" : "Campaign Id: 10001\nCampaign Name: CAM1\nCampaign Description: DES\nOrganizer: O1\nAddress: ADDRESS\nBeneficiary: B1\nExpected Amount: 12345.0\nStart Date: 2023-03-01\nEnd Date: 2023-03-08\nTotal Collected Amount: 32.0\n",
+  "totalCollectedAmount" : 32.0
+}, {
+  "header" : {
+    "index" : 2,
+    "currentHash" : "e4aea66038f19805c8732ea937d9cb76007f7d3bb1b3f537efd9c2ccc0f96baa",
+    "previousHash" : "e6e350d7e739795fb5701192f344a9798de5dae6a5a8abcac7d5a3cece02fbc0",
+    "timeStamp" : 1679762500821,
+    "merkleRootStr" : "5b83541038de2a033da060c841eb24e22c212567eb07b74df9d9eb60e1477ef1",
+    "campaignId" : 10002,
+    "campaignName" : "CAM2",
+    "description" : "DES1",
+    "address" : "ADDRESS",
+    "organizerName" : "O2",
+    "beneficiary" : "B1",
+    "startDate" : 1677602496675,
+    "endDate" : 1678207298118,
+    "expectedDonationAmount" : 4321.0
+  },
+  "transactions" : [ {
+    "transactionId" : 10004,
+    "from" : "O2",
+    "to" : null,
+    "timestamp" : 1679762500681,
+    "signature" : "KgcTzk3hUohTaVHxq7qiflfeBE2ljBLOEqBtTu2jaROAVWGhfRBoICObXLTpJzDuiIJISmZKV8IWOpHVyWeMVwSHjPNp+cwsTbgcvM/GXTgI1zMJ66dch/AE1ElH9BaIl53QiZQ8flNLQe/OYLeMF+Bfb6OdS5FAbsv2hvRYF+4=",
+    "data" : null
+  }, {
+    "transactionId" : 10005,
+    "from" : "D2",
+    "to" : "10002",
+    "timestamp" : 1679762536624,
+    "signature" : "Js+afG9kZmo1szLiVqsJGWdL7rXNL2KzRIqDeqULaOk0fyhcIoiH7qLZtKEba3TndFiIjqFs8/sC7wwPjJEMWqKCj1unPCoP4IOQ0mfg+yDlkWB5kQkSKODKp3avutnBS5Z5wpDA0HfNdS2bnZkyOpmfC8OeOt4z8j9BGxa8p6k=",
+    "data" : {
+      "amount" : 10.0,
+      "donorName" : "D2",
+      "organizerName" : "O2",
+      "campaignName" : "CAM2"
+    }
+  } ],
+  "detail" : "Campaign Id: 10002\nCampaign Name: CAM2\nCampaign Description: DES1\nOrganizer: O2\nAddress: ADDRESS\nBeneficiary: B1\nExpected Amount: 4321.0\nStart Date: 2023-03-01\nEnd Date: 2023-03-08\nTotal Collected Amount: 10.0\n",
+  "totalCollectedAmount" : 10.0
+} ]

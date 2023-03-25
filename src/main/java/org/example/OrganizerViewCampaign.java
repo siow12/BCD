@@ -5,6 +5,20 @@
 package org.example;
 
 import org.example.blockchain.Block;
+import org.example.blockchain.Transaction;
+import org.example.controller.TransactionController;
+import org.example.exception.DataNotFoundException;
+import org.example.model.transaction.DonationFromDonorTransactionData;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
 
 /**
  *
@@ -12,11 +26,16 @@ import org.example.blockchain.Block;
  */
 public class OrganizerViewCampaign extends javax.swing.JFrame {
 
+    private Block currentBlock;
+
+    private DefaultTableModel tableModel;
+
     /**
      * Creates new form OrganizerViewCampaign
      */
     public OrganizerViewCampaign() {
         initComponents();
+        tableModel =  (DefaultTableModel) transactionTable.getModel();
     }
 
     /**
@@ -36,15 +55,14 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         detailsLabel = new javax.swing.JLabel();
         donateButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        totalAmountField = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         transactionTable = new javax.swing.JTable();
-        totalAmountLabel = new javax.swing.JLabel();
+        verifyTransactionButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        jLabel1.setText("View Campaign");
+        jLabel1.setText("Organizer View Campaign");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setText("Transaction");
@@ -71,18 +89,16 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
             }
         });
 
-        totalAmountField.setEditable(false);
-
         transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "From", "To", "Time", "Signature"
+                "Transaction ID", "From", "Time", "Signature", "Amount"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -92,7 +108,12 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         transactionTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(transactionTable);
 
-        totalAmountLabel.setText("Total Amount:");
+        verifyTransactionButton.setText("Verify Transaction");
+        verifyTransactionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verifyTransactionButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -105,10 +126,6 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(totalAmountLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(totalAmountField, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(330, 330, 330))
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING))
@@ -117,10 +134,11 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                             .addComponent(detailsLabel)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(donateButton)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(donateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGap(104, 104, 104)
                                     .addComponent(cancelButton))
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(verifyTransactionButton))))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -139,13 +157,11 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(donateButton)
-                            .addComponent(cancelButton)))
+                            .addComponent(cancelButton))
+                        .addGap(18, 18, 18)
+                        .addComponent(verifyTransactionButton))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalAmountField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(totalAmountLabel))
-                .addGap(21, 21, 21))
+                .addGap(58, 58, 58))
         );
 
         jLabel1.getAccessibleContext().setAccessibleName("viewCampaignLabel");
@@ -179,6 +195,10 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         Main.organizerHomePage.setVisible(true);
 
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void verifyTransactionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyTransactionButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verifyTransactionButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -216,7 +236,34 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
     }
 
     public void loadData(Block block){
+        this.currentBlock = block;
         detailsTextArea.setText(block.getDetail());
+
+        try{
+            List<Transaction> transactions = TransactionController.findAllTransactionFromDonor(currentBlock.getHeader().getCampaignId());
+
+            transactions.forEach(c->{
+                Object[] row = new Object[5];
+                row[0] = c.getTransactionId();
+                row[1] = c.getFrom();
+                row[2] = getLocalDate(c.getTimestamp());
+                row[3] = c.getSignature();
+                row[4] = ((DonationFromDonorTransactionData)c.getData()).getAmount();
+                tableModel.addRow(row);
+            });
+            if(transactionTable.getRowCount() > 0){
+                transactionTable.setRowSelectionInterval(0,0);
+            }
+        }catch (DataNotFoundException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    private LocalDate getLocalDate(long timestamp) {
+        Instant instant = Instant.ofEpochSecond(timestamp / 1000);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return localDateTime.toLocalDate();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -229,8 +276,7 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextField totalAmountField;
-    private javax.swing.JLabel totalAmountLabel;
     private javax.swing.JTable transactionTable;
+    private javax.swing.JButton verifyTransactionButton;
     // End of variables declaration//GEN-END:variables
 }

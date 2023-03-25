@@ -50,7 +50,6 @@
                               <Component id="organizerNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="campaignNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="totalAmountLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="dateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="confirmButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
@@ -60,7 +59,6 @@
                                   <Component id="organizerNameField" alignment="0" max="32767" attributes="0"/>
                                   <Component id="campaignNameField" alignment="0" max="32767" attributes="0"/>
                                   <Component id="totalAmountField" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="dateChooser" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -99,12 +97,7 @@
                       <Component id="totalAmountLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="totalAmountField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="dateLabel" min="-2" max="-2" attributes="0"/>
-                      <Component id="dateChooser" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="confirmButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -155,25 +148,26 @@
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="campaignNameLabel"/>
           </AccessibilityProperties>
         </Component>
-        <Component class="javax.swing.JLabel" name="dateLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Date:"/>
-          </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="dateLabel"/>
-          </AccessibilityProperties>
-        </Component>
         <Component class="javax.swing.JTextField" name="nameField">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="nameField"/>
           </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JTextField" name="organizerNameField">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="organizerNameField"/>
           </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JTextField" name="campaignNameField">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="campaignNameField"/>
           </AccessibilityProperties>
@@ -181,11 +175,6 @@
         <Component class="javax.swing.JTextField" name="totalAmountField">
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="totalAmountField"/>
-          </AccessibilityProperties>
-        </Component>
-        <Component class="com.toedter.calendar.JDateChooser" name="dateChooser">
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="dateChooser"/>
           </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JButton" name="confirmButton">

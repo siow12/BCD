@@ -221,7 +221,6 @@ public class OrganizerHomepage extends javax.swing.JFrame {
         if(campaignTable.getRowCount() > 0){
             campaignTable.setRowSelectionInterval(0,0);
         }
-        System.out.println();
 
     }
 

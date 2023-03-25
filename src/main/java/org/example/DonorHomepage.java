@@ -4,7 +4,20 @@
  */
 package org.example;
 
+import org.example.blockchain.Block;
+import org.example.blockchain.Blockchain;
+import org.example.controller.UserController;
+import org.example.exception.DataNotFoundException;
+import org.example.model.User;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -20,6 +33,18 @@ public class DonorHomepage extends javax.swing.JFrame {
     public DonorHomepage() {
         initComponents();
         tableModel = (DefaultTableModel) campaignTable.getModel();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                loadTable();
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+            }
+        });
     }
 
     /**
@@ -142,6 +167,12 @@ public class DonorHomepage extends javax.swing.JFrame {
 
     private void addDonationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDonationButtonActionPerformed
         // TODO add your handling code here:
+        try{
+            Block block = getSelectedCampaign().orElseThrow(()->new DataNotFoundException("Campaign Not Found"));
+            Main.donation.setCurrentCampaign(block);
+        }catch (DataNotFoundException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
         this.setVisible(false);
         Main.donation.setVisible(true);
@@ -150,8 +181,16 @@ public class DonorHomepage extends javax.swing.JFrame {
     private void viewCampaignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewCampaignButtonActionPerformed
         // TODO add your handling code here:
 
+        try{
+            Block block = getSelectedCampaign().orElseThrow(()->new DataNotFoundException("Campaign Not Found"));
+            Main.donorViewCampaign.loadData(block);
+        }catch (DataNotFoundException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         this.setVisible(false);
         Main.donorViewCampaign.setVisible(true);
+
     }//GEN-LAST:event_viewCampaignButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
@@ -159,8 +198,39 @@ public class DonorHomepage extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_logoutButtonActionPerformed
 
-    public void loadAllCampaign(){
+    public void loadTable(){
+        tableModel.setRowCount(0);
 
+        LinkedList<Block> campaignList = Blockchain.getBlocks();
+
+        campaignList.forEach(c->{
+            Block.Header header = c.getHeader();
+            Object[] row = new Object[9];
+            row[0] = header.getCampaignId();
+            row[1] = header.getCampaignName();
+            row[2] = header.getDescription();
+            row[3] = header.getAddress();
+            row[4] = header.getOrganizerName();
+            row[5] = header.getBeneficiary();
+            row[6] = new Date(header.getStartDate()).toString();
+            row[7] = new Date(header.getEndDate()).toString();
+            row[8] = header.getExpectedDonationAmount().toString();
+            tableModel.addRow(row);
+        });
+        if(campaignTable.getRowCount() > 0){
+            campaignTable.setRowSelectionInterval(0,0);
+        }
+
+    }
+
+    private Optional<Block> getSelectedCampaign() {
+        int selectedRow = campaignTable.getSelectedRow();
+        if (selectedRow == -1) {
+            campaignTable.setRowSelectionInterval(0, 0);
+            selectedRow = 0;
+        }
+        long campaignId = (long) campaignTable.getValueAt(selectedRow, 0);
+        return Blockchain.findBlockByCampaignId(campaignId);
     }
 
     /**

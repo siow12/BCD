@@ -15,7 +15,5 @@ public class DonationFromOrgToBnfcyTransactionData implements Serializable {
     private String phone;
     private String status;
 
-    public String getDetail(){
-        return null;
-    }
+
 }

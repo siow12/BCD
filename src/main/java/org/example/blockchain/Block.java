@@ -3,13 +3,16 @@ package org.example.blockchain;
 import lombok.Data;
 import org.example.cryptography.HasherService;
 import org.example.cryptography.MerkleTreeService;
+import org.example.model.transaction.DonationFromDonorTransactionData;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -78,9 +81,23 @@ public class Block implements Serializable {
                 .append("Address: ").append(this.header.address).append("\n")
                 .append("Beneficiary: ").append(this.header.beneficiary).append("\n")
                 .append("Expected Amount: ").append(this.header.expectedDonationAmount).append("\n")
-                .append("Start Date: ").append(new Date(this.header.startDate)).append("\n")
-                .append("End Date: ").append(new Date(this.header.endDate)).append("\n");
+                .append("Start Date: ").append(getLocalDate(this.header.startDate)).append("\n")
+                .append("End Date: ").append(getLocalDate(this.header.endDate)).append("\n")
+                .append("Total Collected Amount: ").append(getTotalCollectedAmount()).append("\n");
         return builder.toString();
+    }
+
+    public Double getTotalCollectedAmount() {
+        return this.transactions.stream()
+                .filter(t -> (t.getData() != null) && (t.getData() instanceof DonationFromDonorTransactionData))
+                .mapToDouble(d -> ((DonationFromDonorTransactionData) d.getData()).getAmount())
+                .sum();
+    }
+
+    private LocalDate getLocalDate(long timestamp) {
+        Instant instant = Instant.ofEpochSecond(timestamp / 1000);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return localDateTime.toLocalDate();
     }
 
     @Data

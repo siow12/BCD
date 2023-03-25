@@ -13,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class Transaction implements Serializable{
+    private long transactionId;
     private String from;
     private String to;
     private long timestamp;
