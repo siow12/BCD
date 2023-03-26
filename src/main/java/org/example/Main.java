@@ -8,6 +8,9 @@ import org.example.blockchain.Block;
 import org.example.blockchain.Blockchain;
 import org.example.blockchain.Transaction;
 import org.example.controller.UserController;
+import org.example.cryptography.AsymmCryptoService;
+import org.example.cryptography.SignatureService;
+import org.example.exception.CryptographyException;
 import org.example.model.User;
 
 import java.io.Serializable;
@@ -29,12 +32,25 @@ public class Main {
     public static final OrganizerAddCampaign organizerAddCampaign = new OrganizerAddCampaign();
     public static final OrganizerViewCampaign organizerViewCampaign = new OrganizerViewCampaign();
     public static final BeneficiaryHomepage beneficiaryHomepage = new BeneficiaryHomepage();
+    public static final Statement statementPage = new Statement();
+    public static final OrganizerDonatePage organizerDonatePage = new OrganizerDonatePage();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CryptographyException {
 
 
 
         loginPage.setVisible(true);
+//        String test1 = "test";
+//        String test2 = AsymmCryptoService.encrypt(test1, "B1");
+//        System.out.println(test2);
+//        String res = AsymmCryptoService.decrypt(test2, "B1");
+//        System.out.println(res);
+
+//        String datatoSign = "test";
+//        String signature = SignatureService.sign(datatoSign, "D1");
+//        boolean iscorrect = SignatureService.verify(datatoSign, "D1", signature);
+//        System.out.println(iscorrect);
+
         //Register and login
         //UserController.register("YC", "123", User.Role.DONOR);
         //UserController.login("YC","123");

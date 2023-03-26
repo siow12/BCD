@@ -9,8 +9,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class DonationFromOrgToBnfcyTransactionData implements Serializable {
+
     private Double amount;
     private String beneficiaryName;
+    private String description;
     private String address;
     private String phone;
     private String status;

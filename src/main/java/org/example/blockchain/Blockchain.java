@@ -47,5 +47,9 @@ public class Blockchain {
         return getBlocks().stream().filter(b -> b.getHeader().getOrganizerName().equals(organizer)).toList();
     }
 
+    public static Optional<Block> findCampaignByOrganizerNameAndBnfcy(String organizerName, String bnfcy) {
+        return getBlocks().stream().filter(b -> (b.getHeader().getBeneficiary().equals(bnfcy)) && (b.getHeader().getOrganizerName().equals(organizerName))).findFirst();
+    }
+
 
 }

@@ -3,6 +3,7 @@ package org.example.blockchain;
 import lombok.Data;
 import org.example.cryptography.HasherService;
 import org.example.cryptography.MerkleTreeService;
+import org.example.model.transaction.CampaignStatementTransactionData;
 import org.example.model.transaction.DonationFromDonorTransactionData;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 public class Block implements Serializable {
@@ -98,6 +100,10 @@ public class Block implements Serializable {
         Instant instant = Instant.ofEpochSecond(timestamp / 1000);
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         return localDateTime.toLocalDate();
+    }
+
+    public Optional<Transaction> getFinalStatement(){
+        return transactions.stream().filter(t->t.getData() instanceof CampaignStatementTransactionData).findFirst();
     }
 
     @Data

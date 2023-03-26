@@ -175,7 +175,7 @@ public class Donation extends javax.swing.JFrame {
 
 
         } catch (DataNotFoundException e) {
-
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         this.setVisible(false);

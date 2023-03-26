@@ -7,7 +7,9 @@ package org.example;
 import org.example.blockchain.Block;
 import org.example.blockchain.Transaction;
 import org.example.controller.TransactionController;
+import org.example.cryptography.SignatureService;
 import org.example.exception.DataNotFoundException;
+import org.example.model.transaction.CampaignStatementTransactionData;
 import org.example.model.transaction.DonationFromDonorTransactionData;
 
 import javax.swing.*;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -181,6 +184,19 @@ public class DonorViewCampaign extends javax.swing.JFrame {
 
     private void verifyStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyStatementButtonActionPerformed
         // TODO add your handling code here:
+        try {
+            Transaction statement = currentBlock.getFinalStatement().orElseThrow(()->new DataNotFoundException("Statement Not Found"));
+            boolean isCorrect = SignatureService.verify(statement.toString(), statement.getFrom(), statement.getSignature());
+            if(isCorrect){
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + statement.getTransactionId()
+                        + " is valid");
+            }else {
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + statement.getTransactionId()
+                        + " is invalid" ,"Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
 //        this.setVisible(false);
 //        Main.donorHomePage.setVisible(true);
@@ -194,11 +210,41 @@ public class DonorViewCampaign extends javax.swing.JFrame {
 
     private void verifyTransactionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyTransactionButtonActionPerformed
         // TODO add your handling code here:
+        try {
+            int selectedRow = transactionTable.getSelectedRow();
+            if (selectedRow == -1) {
+                transactionTable.setRowSelectionInterval(0, 0);
+                selectedRow = 0;
+            }
+            long transactionId = (long) transactionTable.getValueAt(selectedRow, 0);
+            Transaction transaction = TransactionController
+                    .findTransactionByBlockAndId(transactionId, currentBlock)
+                    .orElseThrow(() -> new DataNotFoundException("Transaction Not Found"));
+
+            boolean isCorrect = SignatureService.verify(transaction.toString(), transaction.getFrom(), transaction.getSignature());
+            if(isCorrect){
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + transactionId
+                        + " is valid");
+            }else {
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + transactionId
+                        + " is invalid" ,"Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (DataNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_verifyTransactionButtonActionPerformed
 
     public void loadData(Block block) {
         this.currentBlock = block;
-        detailsTextArea.setText(block.getDetail());
+        tableModel.setRowCount(0);
+
+        Optional<Transaction> statement = currentBlock.getFinalStatement();
+        String detail = "";
+        detail = detail + block.getDetail();
+        if(statement.isPresent()){
+            detail = detail + ((CampaignStatementTransactionData)statement.get().getData()).getDetail();
+        }
+        detailsTextArea.setText(detail);
 
         try {
             List<Transaction> transactions = TransactionController.findAllTransactionByCampaignIdAndDonor(currentBlock.getHeader().getCampaignId(), Main.currentUser);

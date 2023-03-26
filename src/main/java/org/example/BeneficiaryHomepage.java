@@ -4,17 +4,109 @@
  */
 package org.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.blockchain.Block;
+import org.example.blockchain.Blockchain;
+import org.example.blockchain.Transaction;
+import org.example.controller.TransactionController;
+import org.example.cryptography.AsymmCryptoService;
+import org.example.cryptography.SignatureService;
+import org.example.exception.CryptographyException;
+import org.example.exception.DataNotFoundException;
+import org.example.model.transaction.CampaignStatementTransactionData;
+import org.example.model.transaction.DonationFromDonorTransactionData;
+import org.example.model.transaction.DonationFromOrgToBnfcyTransactionData;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Optional;
+
 /**
  *
  * @author Pc
  */
 public class BeneficiaryHomepage extends javax.swing.JFrame {
 
+    private DefaultTableModel tableModel;
+
+    private Block currentBlock;
+
+    private List<Transaction> transactionList;
+
     /**
      * Creates new form BeneficiaryHomepage
      */
     public BeneficiaryHomepage() {
         initComponents();
+        tableModel =  (DefaultTableModel) transactionTable.getModel();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                loadData();
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+            }
+        });
+        transactionTable.getSelectionModel().addListSelectionListener(e -> {
+            if(e.getValueIsAdjusting()){
+                return;
+            }
+            try{
+                int selectedRow = transactionTable.getSelectedRow();
+                if (selectedRow == -1) {
+                    transactionTable.setRowSelectionInterval(0, 0);
+                    selectedRow = 0;
+                }
+                Transaction selected = transactionList.get(selectedRow);
+                ObjectMapper mapper = new ObjectMapper();
+                String decryptedData = AsymmCryptoService.decrypt((String) selected.getData(), Main.currentUser.getUserName());
+                DonationFromOrgToBnfcyTransactionData transactionData = mapper.readValue(decryptedData, DonationFromOrgToBnfcyTransactionData.class);
+                Block block = Blockchain.findCampaignByOrganizerNameAndBnfcy(selected.getFrom(), Main.currentUser.getUserName())
+                        .orElseThrow(() -> new DataNotFoundException("Campaign Not Found"));
+
+                this.currentBlock = block;
+
+                StringBuilder stringBuilder = new StringBuilder();
+                String detail = "";
+                String campaignDetail = block.getDetail();
+                String beneficiaryDetail = stringBuilder.append("\n")
+                        .append("---Beneficiary Detail---").append("\n")
+                        .append("Name: ").append(transactionData.getBeneficiaryName()).append("\n")
+                        .append("Description: ").append(transactionData.getDescription()).append("\n")
+                        .append("Address: ").append(transactionData.getAddress()).append("\n")
+                        .append("Phone: ").append(transactionData.getPhone()).append("\n")
+                        .append("Status: ").append(transactionData.getStatus()).append("\n")
+                        .toString();
+
+                detail = detail + campaignDetail + beneficiaryDetail;
+
+                Optional<Transaction> statement = block.getFinalStatement();
+                if(statement.isPresent()){
+                    detail = detail + ((CampaignStatementTransactionData)statement.get().getData()).getDetail();
+                }
+
+                detailsTextArea.setText(detail);
+
+            }catch (Exception ex){
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            //JOptionPane.showMessageDialog(null, "test" + e.getFirstIndex());
+        });
     }
 
     /**
@@ -28,27 +120,25 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         transactionLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         detailsTextArea = new javax.swing.JTextArea();
         detailsLabel = new javax.swing.JLabel();
         verifyButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
+        verifyStatementButton = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        transactionTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         jLabel1.setText("Beneficiary");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
         transactionLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        transactionLabel.setText("Transaction");
+        transactionLabel.setText("Transaction & Statement");
 
+        detailsTextArea.setEditable(false);
         detailsTextArea.setColumns(20);
         detailsTextArea.setRows(5);
         jScrollPane2.setViewportView(detailsTextArea);
@@ -56,7 +146,7 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
         detailsLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         detailsLabel.setText("Details");
 
-        verifyButton.setText("Verify");
+        verifyButton.setText("Verify Transaction");
         verifyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verifyButtonActionPerformed(evt);
@@ -70,30 +160,54 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
             }
         });
 
+        verifyStatementButton.setText("Verify Statement");
+        verifyStatementButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verifyStatementButtonActionPerformed(evt);
+            }
+        });
+
+        transactionTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Transaction ID", "From", "Time", "Signature", "Amount"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        transactionTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(transactionTable);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(transactionLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(detailsLabel)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(verifyButton)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(logoutButton))
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jLabel1)
-                        .addGap(251, 251, 251)))
-                .addContainerGap(54, Short.MAX_VALUE))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(transactionLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(detailsLabel)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(verifyButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(verifyStatementButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(logoutButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,25 +220,30 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
                     .addComponent(detailsLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(verifyButton)
-                            .addComponent(logoutButton))))
-                .addContainerGap(89, Short.MAX_VALUE))
+                            .addComponent(logoutButton)
+                            .addComponent(verifyStatementButton)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 77, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 45, Short.MAX_VALUE))
         );
 
         pack();
@@ -132,12 +251,90 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
 
     private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyButtonActionPerformed
         // TODO add your handling code here:
+        try {
+            int selectedRow = transactionTable.getSelectedRow();
+            if (selectedRow == -1) {
+                transactionTable.setRowSelectionInterval(0, 0);
+                selectedRow = 0;
+            }
+            long transactionId = (long) transactionTable.getValueAt(selectedRow, 0);
+            Transaction transaction = transactionList.get(selectedRow);
+
+            boolean isCorrect = SignatureService.verify(transaction.toString(), transaction.getFrom(), transaction.getSignature());
+            if(isCorrect){
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + transactionId
+                        + " is valid");
+            }else {
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + transactionId
+                        + " is invalid" ,"Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_verifyButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_logoutButtonActionPerformed
+
+    private void verifyStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyStatementButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            Transaction statement = currentBlock.getFinalStatement().orElseThrow(()->new DataNotFoundException("Statement Not Found"));
+            boolean isCorrect = SignatureService.verify(statement.toString(), statement.getFrom(), statement.getSignature());
+            if(isCorrect){
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + statement.getTransactionId()
+                        + " is valid");
+            }else {
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + statement.getTransactionId()
+                        + " is invalid" ,"Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_verifyStatementButtonActionPerformed
+
+    public void loadData(){
+        tableModel.setRowCount(0);
+
+        try{
+            List<Transaction> transactions = TransactionController.findAllTransactionToBnfcy(Main.currentUser);
+            this.transactionList = transactions;
+            transactions.forEach(c -> {
+                try{
+                    Object[] row = new Object[5];
+                    ObjectMapper mapper = new ObjectMapper();
+                    String decryptedData = AsymmCryptoService.decrypt((String) c.getData(), Main.currentUser.getUserName());
+                    DonationFromOrgToBnfcyTransactionData transactionData = mapper.readValue(decryptedData, DonationFromOrgToBnfcyTransactionData.class);
+
+                    row[0] = c.getTransactionId();
+                    row[1] = c.getFrom();
+                    row[2] = getLocalDate(c.getTimestamp());
+                    row[3] = c.getSignature();
+                    row[4] = transactionData.getAmount();
+                    tableModel.addRow(row);
+                } catch (CryptographyException | JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            if (transactionTable.getRowCount() > 0) {
+                transactionTable.setRowSelectionInterval(0, 0);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Unexpected Error", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private LocalDate getLocalDate(long timestamp) {
+        Instant instant = Instant.ofEpochSecond(timestamp / 1000);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return localDateTime.toLocalDate();
+    }
 
     /**
      * @param args the command line arguments
@@ -179,11 +376,12 @@ public class BeneficiaryHomepage extends javax.swing.JFrame {
     private javax.swing.JTextArea detailsTextArea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton logoutButton;
     private javax.swing.JLabel transactionLabel;
+    private javax.swing.JTable transactionTable;
     private javax.swing.JButton verifyButton;
+    private javax.swing.JButton verifyStatementButton;
     // End of variables declaration//GEN-END:variables
 }

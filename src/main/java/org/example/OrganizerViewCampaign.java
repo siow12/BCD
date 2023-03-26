@@ -5,9 +5,12 @@
 package org.example;
 
 import org.example.blockchain.Block;
+import org.example.blockchain.Blockchain;
 import org.example.blockchain.Transaction;
 import org.example.controller.TransactionController;
+import org.example.cryptography.SignatureService;
 import org.example.exception.DataNotFoundException;
+import org.example.model.transaction.CampaignStatementTransactionData;
 import org.example.model.transaction.DonationFromDonorTransactionData;
 
 import javax.swing.*;
@@ -19,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -58,6 +62,7 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         transactionTable = new javax.swing.JTable();
         verifyTransactionButton = new javax.swing.JButton();
+        generateStatementButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -115,6 +120,13 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
             }
         });
 
+        generateStatementButton.setText("Generate Statement");
+        generateStatementButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateStatementButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -138,7 +150,9 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                                     .addGap(104, 104, 104)
                                     .addComponent(cancelButton))
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(verifyTransactionButton))))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(generateStatementButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(verifyTransactionButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -159,7 +173,9 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
                             .addComponent(donateButton)
                             .addComponent(cancelButton))
                         .addGap(18, 18, 18)
-                        .addComponent(verifyTransactionButton))
+                        .addComponent(verifyTransactionButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(generateStatementButton))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(58, 58, 58))
         );
@@ -187,6 +203,10 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
 
     private void donateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_donateButtonActionPerformed
         // TODO add your handling code here:
+
+        this.setVisible(false);
+        Main.organizerDonatePage.setVisible(true);
+        Main.organizerDonatePage.loadData(currentBlock);
     }//GEN-LAST:event_donateButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -198,7 +218,76 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
 
     private void verifyTransactionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyTransactionButtonActionPerformed
         // TODO add your handling code here:
+        try {
+            int selectedRow = transactionTable.getSelectedRow();
+            if (selectedRow == -1) {
+                transactionTable.setRowSelectionInterval(0, 0);
+                selectedRow = 0;
+            }
+            long transactionId = (long) transactionTable.getValueAt(selectedRow, 0);
+            Transaction transaction = TransactionController
+                    .findTransactionByBlockAndId(transactionId, currentBlock)
+                    .orElseThrow(() -> new DataNotFoundException("Transaction Not Found"));
+
+            boolean isCorrect = SignatureService.verify(transaction.toString(), transaction.getFrom(), transaction.getSignature());
+            if(isCorrect){
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + transactionId
+                        + " is valid");
+            }else {
+                JOptionPane.showMessageDialog(null, "Transaction Id :" + transactionId
+                        + " is invalid" ,"Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (DataNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_verifyTransactionButtonActionPerformed
+
+    private void generateStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateStatementButtonActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+        Main.statementPage.setVisible(true);
+        Main.statementPage.loadData(currentBlock);
+    }//GEN-LAST:event_generateStatementButtonActionPerformed
+
+    public void loadData(Block block){
+        this.currentBlock = block;
+        tableModel.setRowCount(0);
+
+        Optional<Transaction> statement = currentBlock.getFinalStatement();
+        String detail = "";
+        detail = detail + block.getDetail();
+        if(statement.isPresent()){
+            detail = detail + ((CampaignStatementTransactionData)statement.get().getData()).getDetail();
+        }
+        detailsTextArea.setText(detail);
+
+        try{
+            List<Transaction> transactions = TransactionController.findAllTransactionFromDonor(currentBlock.getHeader().getCampaignId());
+
+            transactions.forEach(c->{
+                Object[] row = new Object[5];
+                row[0] = c.getTransactionId();
+                row[1] = c.getFrom();
+                row[2] = getLocalDate(c.getTimestamp());
+                row[3] = c.getSignature();
+                row[4] = ((DonationFromDonorTransactionData)c.getData()).getAmount();
+                tableModel.addRow(row);
+            });
+            if(transactionTable.getRowCount() > 0){
+                transactionTable.setRowSelectionInterval(0,0);
+            }
+        }catch (DataNotFoundException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    private LocalDate getLocalDate(long timestamp) {
+        Instant instant = Instant.ofEpochSecond(timestamp / 1000);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return localDateTime.toLocalDate();
+    }
 
     /**
      * @param args the command line arguments
@@ -235,42 +324,12 @@ public class OrganizerViewCampaign extends javax.swing.JFrame {
         });
     }
 
-    public void loadData(Block block){
-        this.currentBlock = block;
-        detailsTextArea.setText(block.getDetail());
-
-        try{
-            List<Transaction> transactions = TransactionController.findAllTransactionFromDonor(currentBlock.getHeader().getCampaignId());
-
-            transactions.forEach(c->{
-                Object[] row = new Object[5];
-                row[0] = c.getTransactionId();
-                row[1] = c.getFrom();
-                row[2] = getLocalDate(c.getTimestamp());
-                row[3] = c.getSignature();
-                row[4] = ((DonationFromDonorTransactionData)c.getData()).getAmount();
-                tableModel.addRow(row);
-            });
-            if(transactionTable.getRowCount() > 0){
-                transactionTable.setRowSelectionInterval(0,0);
-            }
-        }catch (DataNotFoundException e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-    }
-
-    private LocalDate getLocalDate(long timestamp) {
-        Instant instant = Instant.ofEpochSecond(timestamp / 1000);
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        return localDateTime.toLocalDate();
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel detailsLabel;
     private javax.swing.JTextArea detailsTextArea;
     private javax.swing.JButton donateButton;
+    private javax.swing.JButton generateStatementButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
